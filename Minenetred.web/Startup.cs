@@ -58,6 +58,7 @@ namespace Minenetred.web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

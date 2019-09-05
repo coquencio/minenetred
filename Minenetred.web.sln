@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minenetred.web", "Minenetred.web\Minenetred.web.csproj", "{6429F32E-402F-4739-82B2-1E3FA5D8AE5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redmine.library", "Redmine.library\Redmine.library.csproj", "{ED08B5D4-B0B7-46CE-A60B-CC42C274201F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6429F32E-402F-4739-82B2-1E3FA5D8AE5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6429F32E-402F-4739-82B2-1E3FA5D8AE5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6429F32E-402F-4739-82B2-1E3FA5D8AE5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED08B5D4-B0B7-46CE-A60B-CC42C274201F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED08B5D4-B0B7-46CE-A60B-CC42C274201F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED08B5D4-B0B7-46CE-A60B-CC42C274201F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED08B5D4-B0B7-46CE-A60B-CC42C274201F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
