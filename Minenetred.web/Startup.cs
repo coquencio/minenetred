@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +11,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Minenetred.web.Infrastructure;
+using Redmine.library.Services;
+using Redmine.library.Services.Implementations;
 
 namespace Minenetred.web
 {
@@ -30,6 +35,21 @@ namespace Minenetred.web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.AddScoped<IProjectService, ProjectService>();
+
+            services.AddHttpClient<IProjectService, ProjectService>("redmine",
+                c => c.BaseAddress = new Uri("https://dev.unosquare.com/redmine/")
+                );
+
+            var mappingConfig = new MapperConfiguration( mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
