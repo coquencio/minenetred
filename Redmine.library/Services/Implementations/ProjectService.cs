@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Redmine.library.Core;
 using Redmine.library.Models;
 using Redmine.library.Services;
 using System;
@@ -19,10 +20,8 @@ namespace Redmine.library.Services.Implementations
             _client = client;
         }
 
-
         public async Task<ProjectListResponse> GetProjectsAsync(string authKey)
         {
-  
             try
             {
                 if (authKey == null || authKey.Equals(""))
@@ -47,12 +46,6 @@ namespace Redmine.library.Services.Implementations
             {
                 throw new Exception(ex.Message); 
             }
-            
-
-           
-
-
         }
-
     }
 }

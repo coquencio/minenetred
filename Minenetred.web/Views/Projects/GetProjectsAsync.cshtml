@@ -1,0 +1,21 @@
+﻿
+
+@model Minenetred.web.ViewModels.ProjectsViewModel
+
+@{
+    ViewData["Title"] = "ProjectsList";
+}
+
+<h2>My open projects</h2>
+
+<ul>
+    @{
+        foreach (var project in Model.Projects)
+        {
+            <li>@project.Name</li>
+        }
+
+    }
+</ul>
+
+
