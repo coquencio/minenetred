@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Minenetred.web.Context;
 
 namespace Minenetred.web.Migrations
 {
     [DbContext(typeof(MinenetredContext))]
-    partial class MinenetredContextModelSnapshot : ModelSnapshot
+    [Migration("20190918204924_redmineId")]
+    partial class redmineId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

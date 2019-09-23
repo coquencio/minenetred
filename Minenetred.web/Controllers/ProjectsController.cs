@@ -9,12 +9,12 @@ using Redmine.library.Models;
 using Minenetred.web.ViewModels;
 using AutoMapper;
 using System.Net.Http;
-using Redmine.library.Services;
 using Microsoft.AspNetCore.Authorization;
 using Minenetred.web.Context;
 using Minenetred.web.Context.ContextModels;
 using Minenetred.web.Infrastructure;
 using System.DirectoryServices.AccountManagement;
+using Minenetred.web.Services;
 
 namespace Minenetred.web.Controllers
 {
@@ -22,27 +22,15 @@ namespace Minenetred.web.Controllers
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectService;
-        private readonly IMapper _mapper;
-        private readonly MinenetredContext _context;
-        private readonly IEncryptionService _encryptionService;
+        private readonly IUsersManagementService _userManagementService;
 
         public ProjectsController(
-            IMapper mapper,
             IProjectService service,
-            MinenetredContext context,
-            IEncryptionService encryptionService
+            IUsersManagementService userManagementService
             )
         {
-            _mapper = mapper;
             _projectService = service;
-            _context = context;
-            _encryptionService = encryptionService;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose();
-            base.Dispose(disposing);
+            _userManagementService = userManagementService;
         }
 
         [Route("/")]
@@ -50,39 +38,15 @@ namespace Minenetred.web.Controllers
         public async Task<ActionResult<ProjectsViewModel>> GetProjectsAsync()
         {
             var userName = UserPrincipal.Current.EmailAddress;
-            var user = _context.Users.SingleOrDefault(c => c.UserName == userName);
-            if (user == null)
-            {
-                var newUser = new User()
-                {
-                    UserName = userName,
-                    CreatedDate = DateTime.Now,
+            if (!_userManagementService.CheckReisteredUser(userName))
+                _userManagementService.RegisterUser(userName);
 
-                };
-
-                _context.Users.Add(newUser);
-                _context.SaveChanges();
-                user = _context.Users.SingleOrDefault(c => c.UserName == userName);
-            }
-
-            if (user.RedmineKey == null)
-            {
+            if (!_userManagementService.CheckRedmineKey(userName))
                 return RedirectToAction("AddKey");
-            }
 
-            var decryptedKey = _encryptionService.Decrypt(user.RedmineKey);
-            var apiContent = await _projectService.GetProjectsAsync(decryptedKey);
-            var projectsList = _mapper.Map<ProjectListResponse, ProjectsViewModel>(apiContent);
-            var shapedList = new ProjectsViewModel()
-            {
-                Projects = new List<ProjectDto>(),
-            };
-            foreach (var project in projectsList.Projects)
-            {
-                if (project.status == 1)
-                    shapedList.Projects.Add(project);
-            }
-            return View(shapedList);
+            var decryptedKey = _userManagementService.GetUserKey(userName);
+            var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
+            return View(projectList);
         }
         [Route("/AccessKey")]
         public IActionResult AddKey()
@@ -90,32 +54,27 @@ namespace Minenetred.web.Controllers
             var userName = UserPrincipal.Current.EmailAddress;
             ViewBag.user = userName;
 
-            var userKey = _context.Users.SingleOrDefault(c => c.UserName == userName).RedmineKey;
+            var userKey = _userManagementService.GetUserKey(userName);
             if (userKey == null)
             {
                 ViewBag.key = null;
             }
             else
-            { 
-                var denryptionKey = _encryptionService.Decrypt(userKey);
+            {
+                var denryptionKey = _userManagementService.GetUserKey(UserPrincipal.Current.EmailAddress);
                 ViewBag.key = denryptionKey;
             }
             return View();
         } 
 
         [HttpPost]
-        public IActionResult KeyUpdate(string key)
+        public async Task<IActionResult> KeyUpdateAsync(string key)
         {
             if (string.IsNullOrEmpty(key))
                 return RedirectToAction("AddKey");
 
-            var encryptedKey = _encryptionService.Encrypt(key);
-            var userName = UserPrincipal.Current.EmailAddress;
-            var user = _context.Users.SingleOrDefault(c => c.UserName == userName);
-            user.RedmineKey = encryptedKey;
-            user.LastKeyUpdatedDate = DateTime.Now;
-            _context.Users.Update(user);
-            _context.SaveChanges();
+            _userManagementService.UpdateKey(key, UserPrincipal.Current.EmailAddress);
+            await _userManagementService.AddRedmineIdAsync(key);
             return RedirectToAction("GetProjectsAsync");
         }
     }

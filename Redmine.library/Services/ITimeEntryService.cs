@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Redmine.library.Services
 {
-    public interface IProjectService
+    public interface ITimeEntryService
     {
-        Task<ProjectListResponse> GetProjectsAsync(string authKey);
+        Task<TimeEntryListResponse> GetTimeEntriesAsync(string authKey, int userId, int projectId, string date);
     }
 }
