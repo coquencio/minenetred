@@ -21,6 +21,8 @@ using Redmine.library.Services.Implementations;
 using System.DirectoryServices.AccountManagement;
 using Minenetred.web.Services;
 using Minenetred.web.Services.Implementations;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Minenetred.web
 {
@@ -48,7 +50,7 @@ namespace Minenetred.web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             #region Library Services
-            services.AddScoped<Redmine.library.Services.IIssueService>(s=> new Redmine.library.Services.Implementations.IssueService(_client));
+            services.AddScoped<Redmine.library.Services.IIssueService>(s => new Redmine.library.Services.Implementations.IssueService(_client));
             services.AddScoped<Redmine.library.Services.ITimeEntryService>(s => new Redmine.library.Services.Implementations.TimeEntryService(_client));
             services.AddScoped<IUserService>(s => new UserService(_client));
             services.AddScoped<Redmine.library.Services.IActivityService>(s => new Redmine.library.Services.Implementations.ActivityService(_client));
@@ -62,19 +64,22 @@ namespace Minenetred.web
             services.AddScoped<Services.IIssueService, Services.Implementations.IssueService>();
             services.AddScoped<Services.IActivityService, Services.Implementations.ActivityService>();
             #endregion
-            var mappingConfig = new MapperConfiguration( mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
+            var mappingConfig = new MapperConfiguration(mc =>
+           {
+               mc.AddProfile(new MappingProfile());
+           });
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
             services.AddDbContext<MinenetredContext>(
-                o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) );
+                o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+           services.AddSwaggerGen(c=> {
+                c.SwaggerDoc("v1", new Info {Title = "My API", Description="Swagger core API"});
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +105,10 @@ namespace Minenetred.web
                     name: "default",
                     template: "{controller=Home}/{action=Index}"
                     );
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
         }
     }

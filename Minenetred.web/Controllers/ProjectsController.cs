@@ -19,6 +19,7 @@ using Minenetred.web.Services;
 namespace Minenetred.web.Controllers
 {
     [Authorize]
+    [ApiExplorerSettings (IgnoreApi =true)]
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectService;
@@ -49,6 +50,7 @@ namespace Minenetred.web.Controllers
             return View(projectList);
         }
         [Route("/AccessKey")]
+        
         public IActionResult AddKey()
         {
             var userName = UserPrincipal.Current.EmailAddress;

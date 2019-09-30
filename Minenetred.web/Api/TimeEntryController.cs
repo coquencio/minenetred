@@ -25,6 +25,9 @@ namespace Minenetred.web.Api
         }
 
         [Route("/Entries/{projectId}/{date}")]
+        [Produces("application/json")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(201)]
         [HttpGet]
         public async Task<ActionResult<TimeEntryViewModel>> GetTimeEntriesAsync([FromRoute] int projectId, [FromRoute]  string date)
         {

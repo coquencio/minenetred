@@ -29,6 +29,9 @@ namespace Minenetred.web.Api
 
         [HttpGet]
         [Route("/Issues/{projectId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(201)]
         public async Task<ActionResult<IssueViewModel>> GetIssuesAsync([FromRoute] int projectId)
         {
             try

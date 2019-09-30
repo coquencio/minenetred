@@ -24,6 +24,9 @@ namespace Minenetred.web.Api
         {
             _activityService = activityService;
         }
+        [Produces("application/json")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(201)]
         [Route("/Activities/{projectId}")]
         [HttpGet]
         public async Task<ActionResult<ActivityViewModel>> GetActivitiesAsync([FromRoute] int projectId)
