@@ -1,5 +1,6 @@
 ﻿
 
+
 @model Minenetred.web.ViewModels.ProjectsViewModel
 
 @{
@@ -7,32 +8,116 @@
 }
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
+    function displayTable() {
+        if ($('.datesTable').css('display') == 'none') {
+            $('.datesTable').toggle("slide");
+        }
+    }
+    function convertDateFormat(value) {
+        value.setDate(value.getDate() + 1);
+        var toReturn = value.getFullYear() + '-' +
+            ('0' + (value.getMonth() + 1)).slice(-2) + '-' +
+            ('0' + value.getDate()).slice(-2);
+        return toReturn;
+    }
+
+    function setDateHeader(date, object, displayDate, weekDays, i) {
+        date.setDate(date.getDate() + 1 + i);
+        var weekDay = weekDays[date.getDay()]
+        $(object).html('<h3>' + weekDay + '</h3>' + '<text>' + displayDate + '</text>');
+    }
+    function setTotalHoursPerDay() {
+        $('.hours-a-day').each(function (indexH, object) {
+            $(object).find('h3').html('0');
+            $('.time-entries').each(function (indexT) {
+                if ($(this).index() - 1 == indexH) {
+                    $(object).find('h3').html(parseInt($(object).find('h3').html()) + parseInt($(this).find('text').find('h4').text()));
+                }
+            });
+        });
+
+    }
+    function setTotalHoursLoggedPerProject(sum, projectId, actualIndex) {
+        $('#' + projectId).children('td:eq(' + actualIndex + ')').find('text').html('Hours logged:<br/> <h4>' + sum + '</h4> ');
+    }
+    function getHoursPerProjectNDay(result) {
+        var sum = 0;
+        $.each(result.timeEntries, function (index, value) {
+            sum = sum + value.hours;
+        });
+        return sum;
+    }
+
+    function setValuesToForm(button) {
+        var projectName = $(button).parent("td").parent("tr").find("td:first").text();
+        $('#modalProjectTitle').text(projectName);
+        var hiddenDate = $(button).parent("td").closest('table').find('th').eq($(button).parent("td").index()).find('text').html();
+        $('#dateEntry').val(hiddenDate);
+        $('#dateText').text('Date: ' + hiddenDate);
+        var projectId = $(button).parent("td").parent("tr").find("td:first").find('input').val();
+        $('#projectIdInput').val(projectId);
+    }
+
+    function setSelector(className, type) {
+        $(className).html('');
+        $.each(type, function (index, object) {
+            $(className).html($(className).html() + '<option value="' + object.id + '">' + Object.values(object)[1] + '</option>')
+        });
+    }
+</script>
+<script>
     $(document).ready(function () {
+        var baseAdress = document.location.origin;
+        var weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
         $('#date').change(function () {
-            if ($('.datesTable').css('display') == 'none') {
-                $('.datesTable').toggle("slide");
-            }
-            var valueDate = new Date($('#date').val());
-            valueDate.setDate(valueDate.getDate() + 1);
+            displayTable();
+            var displayDate = convertDateFormat(new Date($('#date').val()));
+
             $('.tableHeader').each(function (i, obj) {
-                $(this).html(valueDate);
-                valueDate.setDate(valueDate.getDate() + 1);
+                setDateHeader(new Date($('#date').val()), obj, displayDate, weekDays, i)
+            });
+            $('.table-row').each(function () {
+                $(this).children('.time-entries').each(function (indexColumn) {
+                    var date = $(this).closest('table').find('th').eq($(this).index()).find('text').text();
+                    var projectId = $(this).parent("tr").find("td:first").find('input').val();
+
+                    $.ajax({
+                        url: baseAdress + '/Entries/' + projectId + '/' + date,
+                        dataType: 'json',
+                        success: function (result) {
+                            var sum = getHoursPerProjectNDay(result);
+                            var actualIndex = indexColumn + 1;
+                            setTotalHoursLoggedPerProject(sum, projectId, actualIndex);
+                            setTotalHoursPerDay();
+                        }
+                    })
+                });
             });
         });
 
         $('.btn-add-entry').click(function () {
-            var projectName = $(this).parent("td").parent("tr").find("td:first").text();
-            $('#modalProjectTitle').text(projectName);
-            var hiddenDate = $(this).parent("td").closest('table').find('th').eq($(this).parent("td").index()).text();
-            $('#dateEntry').val(hiddenDate);
-            $('#dateText').text('Date: ' + hiddenDate);
-            var projectId = $(this).parent("td").parent("tr").find("td:first").find('input').val();
-            $('#projectIdInput').val(projectId);
+            setValuesToForm(this);
+            var projectId = $('#projectIdInput').val();
+            $.ajax({
+                url: baseAdress + '/Issues/' + projectId,
+                dataType: 'json',
+                success: function (result) {
+                    setSelector('.issue-selector', result.issues);
+                }
+            })
+            $.ajax({
+                url: baseAdress + '/Activities/' + projectId,
+                dataType: 'json',
+                success: function (result) {
+                    setSelector('.activity-selector', result.activities);
+                }
+            });
         });
-    });
+    })
+
 </script>
-
-
 <h2>My open projects</h2>
 
 <hr />
@@ -64,49 +149,52 @@
         <tbody>
             @foreach (var project in Model.Projects)
             {
-                <tr>
+                <tr class="table-row" id="@project.Id">
                     <td scope="row" style="width:25%">
                         @project.Name
-                        <input type="hidden" id="@project.Name" value="@project.Id">
+                        <input type="hidden" value="@project.Id">
 
                     </td>
-                    <td scope="row">
-                        Total hours: 0
-                        <button type="button" class="btn btn-success btn-add-entry"  data-toggle="modal" data-target="#timeEntryForm">
-                            Add time entry
-                        </button>
-                    </td>
-                    <td scope="row">
-                        Total hours: 0
+                    <td scope="row" class="time-entries">
+                        <text></text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
                     </td>
-                    <td scope="row">
-                        Total hours: 0
+                    <td scope="row" class="time-entries">
+                        <text></text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
-                        </button></td>
-                    <td scope="row">
-                        Total hours: 0
+                        </button>
+                    </td>
+                    <td scope="row" class="time-entries">
+                        <text></text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
-                        </button></td>
-                    <td scope="row">
-                        Total hours: 0
+                        </button>
+                    </td>
+                    <td scope="row" class="time-entries">
+                        <text></text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
-                        </button></td>
+                        </button>
+                    </td>
+                    <td scope="row" class="time-entries">
+                        <text></text>
+                        <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
+                            Add time entry
+                        </button>
+                    </td>
                 </tr>
             }
-        <tr>
-            <td scope="row" style="width:25%">Total hours per day</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+            <tr>
+                <td scope="row" style="width:25%">Total hours per day</td>
+                <td class="hours-a-day" style="color:red"><h3>0</h3></td>
+                <td class="hours-a-day" style="color:red"><h3>0</h3></td>
+                <td class="hours-a-day" style="color:red"><h3>0</h3></td>
+                <td class="hours-a-day" style="color:red"><h3>0</h3></td>
+                <td class="hours-a-day" style="color:red"><h3>0</h3></td>
+            </tr>
         </tbody>
     </table>
 </div>
@@ -116,7 +204,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalProjectTitle"></h5>
+                <h2 class="modal-title" id="modalProjectTitle"></h2>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -127,11 +215,11 @@
                         <input id="projectIdInput" type="hidden" name="projectId" value="" />
                         <input class="input-group" type="number" min="0" name="hours" placeholder="Enter hours" /><br />
                         <input class="input-group" type="text" name="description" placeholder="Enter description" /><br />
-                        <select class="input-group" name="issue">
-                            <option value="3">Project Activities</option>
+                        <h5>Select Issue</h5>
+                        <select class="input-group issue-selector" name="issue">
                         </select><br />
-                        <select class="input-group" name="activity">
-                            <option value="2">Development</option>
+                        <h5>Select Activity</h5>
+                        <select class="input-group activity-selector" name="activity">
                         </select><br />
                         <input id="dateEntry" type="hidden" name="date" value="" />
                         <text class="input-group" id="dateText">Date: </text><br />
@@ -145,6 +233,3 @@
         </div>
     </div>
 </div>
-
-
-
