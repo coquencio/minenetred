@@ -7,11 +7,11 @@ namespace Minenetred.web.Services
 {
     public interface IUsersManagementService
     {
-        bool CheckReisteredUser(string userEmail);
+        bool IsUserRegistered(string userEmail);
         void RegisterUser(string userEmail);
-        bool CheckRedmineKey(string userEmail);
+        bool HasRedmineKey(string userEmail);
         void UpdateKey(string apiKey, string userEmail);
         string GetUserKey(string userEmail);
-        Task AddRedmineIdAsync(string key);
+        Task AddRedmineIdAsync(string key, string email);
     }
 }

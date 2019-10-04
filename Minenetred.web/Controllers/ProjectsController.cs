@@ -38,24 +38,34 @@ namespace Minenetred.web.Controllers
         [HttpGet]
         public async Task<ActionResult<ProjectsViewModel>> GetProjectsAsync()
         {
-            var userName = UserPrincipal.Current.EmailAddress;
-            if (!_userManagementService.CheckReisteredUser(userName))
-                _userManagementService.RegisterUser(userName);
+            try
+            {
+                var userName = UserPrincipal.Current.EmailAddress;
+                if (!_userManagementService.IsUserRegistered(userName))
+                    _userManagementService.RegisterUser(userName);
 
-            if (!_userManagementService.CheckRedmineKey(userName))
-                return RedirectToAction("AddKey");
+                if (!_userManagementService.HasRedmineKey(userName))
+                    return RedirectToAction("AddKey");
 
-            var decryptedKey = _userManagementService.GetUserKey(userName);
-            var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
-            return View(projectList);
+                var decryptedKey = _userManagementService.GetUserKey(userName);
+                var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
+                return View(projectList);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("AddKey", new {msj = "Add a valid key"});
+            }
         }
         [Route("/AccessKey")]
         
-        public IActionResult AddKey()
+        public IActionResult AddKey(string msj = null)
         {
             var userName = UserPrincipal.Current.EmailAddress;
             ViewBag.user = userName;
-
+            if (!string.IsNullOrWhiteSpace(msj))
+            {
+                ViewBag.msj = msj;
+            }
             var userKey = _userManagementService.GetUserKey(userName);
             if (userKey == null)
             {
@@ -70,14 +80,21 @@ namespace Minenetred.web.Controllers
         } 
 
         [HttpPost]
-        public async Task<IActionResult> KeyUpdateAsync(string key)
+        public async Task<IActionResult> UpdateRedmineKeyAsync(string Redminekey)
         {
-            if (string.IsNullOrEmpty(key))
-                return RedirectToAction("AddKey");
+            try
+            {
+                if (string.IsNullOrEmpty(Redminekey))
+                    return RedirectToAction("AddKey");
 
-            _userManagementService.UpdateKey(key, UserPrincipal.Current.EmailAddress);
-            await _userManagementService.AddRedmineIdAsync(key);
-            return RedirectToAction("GetProjectsAsync");
+                _userManagementService.UpdateKey(Redminekey, UserPrincipal.Current.EmailAddress);
+                await _userManagementService.AddRedmineIdAsync(Redminekey, UserPrincipal.Current.EmailAddress);
+                return RedirectToAction("GetProjectsAsync");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("AddKey", new {msj="Add a valid key"});
+            }
         }
     }
 }

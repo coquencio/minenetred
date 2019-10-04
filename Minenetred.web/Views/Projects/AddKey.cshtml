@@ -6,7 +6,13 @@
 <h2>AddKey</h2>
 
 <div class="container">
-    <form asp-controller="Projects" asp-action="KeyUpdateAsync" method="post">
+    <form asp-controller="Projects" asp-action="UpdateRedmineKeyAsync" method="post">
+        @{ 
+            if (!string.IsNullOrEmpty(ViewBag.msj))
+            {
+                <h3 style="color:red">@ViewBag.msj</h3>
+            }
+        }
         <div class="form-group">
             <label>@ViewBag.user</label>
             @if (ViewBag.key == null)

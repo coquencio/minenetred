@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Minenetred.web.Context;
 using Minenetred.web.Infrastructure;
+using Minenetred.web.Models;
 using Minenetred.web.ViewModels;
+using Newtonsoft.Json;
 using Redmine.library.Models;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Minenetred.web.Services.Implementations
@@ -34,14 +37,30 @@ namespace Minenetred.web.Services.Implementations
             _usersManagementService = usersManagementService;
         }
 
-        public async Task<TimeEntryViewModel> GetTimeEntriesAsync(int projectId, string date)
+        public async Task<float> GetTimeEntryHoursPerDay(int projectId, string date)
         {
            var user = UserPrincipal.Current.EmailAddress;
            var key = _usersManagementService.GetUserKey(user);
            var redmineId = _context.Users.SingleOrDefault(u=>u.UserName == user).RedmineId;
            var response = await _timeEntryService.GetTimeEntriesAsync(key, redmineId, projectId, date);
-           var toReturn = _mapper.Map<TimeEntryListResponse, TimeEntryViewModel>(response);
-           return toReturn;
+           var shapedList = _mapper.Map<TimeEntryListResponse, TimeEntryViewModel>(response);
+            float totalHours = 0;
+            foreach (var entry in shapedList.TimeEntries)
+            {
+                totalHours += entry.Hours;
+            }
+           return totalHours;
+        }
+
+        public async Task<HttpStatusCode> AddTimeEntryAsync(TimeEntryFormDto entry)
+        {
+            var entryToMap = new TimeEntryFormContainer()
+            {
+                TimeEntry = entry,
+            };
+            var timeEntry = _mapper.Map<TimeEntryFormContainer, TimeEntryDtoContainer>(entryToMap);
+            var key = _usersManagementService.GetUserKey(UserPrincipal.Current.EmailAddress);
+            return  await _timeEntryService.AddTimeEntryAsync(timeEntry, key);
         }
     }
 }

@@ -21,17 +21,19 @@
         return toReturn;
     }
 
-    function setDateHeader(date, object, displayDate, weekDays, i) {
-        date.setDate(date.getDate() + 1 + i);
+    function setDateHeader(date, object, weekDays, i) {
+        date.setDate(date.getDate() + i);
+        var displayDate = convertDateFormat(date);
         var weekDay = weekDays[date.getDay()]
         $(object).html('<h3>' + weekDay + '</h3>' + '<text>' + displayDate + '</text>');
+
     }
     function setTotalHoursPerDay() {
         $('.hours-a-day').each(function (indexH, object) {
             $(object).find('h3').html('0');
             $('.time-entries').each(function (indexT) {
                 if ($(this).index() - 1 == indexH) {
-                    $(object).find('h3').html(parseInt($(object).find('h3').html()) + parseInt($(this).find('text').find('h4').text()));
+                    $(object).find('h3').html(parseFloat($(object).find('h3').html()) + parseFloat($(this).find('text').find('h4').text()));
                 }
             });
         });
@@ -40,20 +42,13 @@
     function setTotalHoursLoggedPerProject(sum, projectId, actualIndex) {
         $('#' + projectId).children('td:eq(' + actualIndex + ')').find('text').html('Hours logged:<br/> <h4>' + sum + '</h4> ');
     }
-    function getHoursPerProjectNDay(result) {
-        var sum = 0;
-        $.each(result.timeEntries, function (index, value) {
-            sum = sum + value.hours;
-        });
-        return sum;
-    }
 
     function setValuesToForm(button) {
         var projectName = $(button).parent("td").parent("tr").find("td:first").text();
         $('#modalProjectTitle').text(projectName);
         var hiddenDate = $(button).parent("td").closest('table').find('th').eq($(button).parent("td").index()).find('text').html();
         $('#dateEntry').val(hiddenDate);
-        $('#dateText').text('Date: ' + hiddenDate);
+        $('#dateText').html('Date: <text>' + hiddenDate + '</text>');
         var projectId = $(button).parent("td").parent("tr").find("td:first").find('input').val();
         $('#projectIdInput').val(projectId);
     }
@@ -64,34 +59,60 @@
             $(className).html($(className).html() + '<option value="' + object.id + '">' + Object.values(object)[1] + '</option>')
         });
     }
+
+    function createDataObject() {
+        return JSON.stringify({
+                issueId: parseInt($('.issue-selector').val()),
+                spentOn: $('#dateText').find('text').text(),
+                hours: parseFloat($('#hours-input').val()),
+                activityId: parseInt($('.activity-selector').val()),
+                comments: $('#comment-input').val()
+        })
+
+    }
+    function validateInputs() {
+        if (!$('#hours-input').val() || !$('#comment-input').val()) {
+            $('.validation').text('Please fill all fields');
+            return false;
+        }
+        return true;
+    }
+    function clearInputs() {
+        $('.validation').text('');
+        $('#comment-input').val('');
+        $('#hours-input').val('');
+    }
 </script>
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
         var baseAdress = document.location.origin;
         var weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
         $('#date').change(function () {
             displayTable();
-            var displayDate = convertDateFormat(new Date($('#date').val()));
-
             $('.tableHeader').each(function (i, obj) {
-                setDateHeader(new Date($('#date').val()), obj, displayDate, weekDays, i)
+                setDateHeader(new Date($('#date').val()), obj, weekDays, i)
             });
             $('.table-row').each(function () {
                 $(this).children('.time-entries').each(function (indexColumn) {
                     var date = $(this).closest('table').find('th').eq($(this).index()).find('text').text();
                     var projectId = $(this).parent("tr").find("td:first").find('input').val();
-
+                    $(this).find('text').text('Loading...');
+                    $('.hours-a-day').find('h3').text('Loading...');
                     $.ajax({
                         url: baseAdress + '/Entries/' + projectId + '/' + date,
                         dataType: 'json',
                         success: function (result) {
-                            var sum = getHoursPerProjectNDay(result);
                             var actualIndex = indexColumn + 1;
-                            setTotalHoursLoggedPerProject(sum, projectId, actualIndex);
+                            setTotalHoursLoggedPerProject(result, projectId, actualIndex);
                             setTotalHoursPerDay();
+                        },
+                        error: function(response){
+                             var errorMessage = reponse.status + ': ' + response.statusText
+                             alert('Error - ' + errorMessage);
                         }
+
                     })
                 });
             });
@@ -105,6 +126,10 @@
                 dataType: 'json',
                 success: function (result) {
                     setSelector('.issue-selector', result.issues);
+                },
+                error: function(response){
+                    var errorMessage = reponse.status + ': ' + response.statusText
+                    alert('Error - ' + errorMessage);
                 }
             })
             $.ajax({
@@ -112,12 +137,45 @@
                 dataType: 'json',
                 success: function (result) {
                     setSelector('.activity-selector', result.activities);
+                },
+                error: function(response){
+                    var errorMessage = reponse.status + ': ' + response.statusText
+                    alert('Error - ' + errorMessage);
                 }
             });
         });
-    })
+
+    
+    $('.btn-close').click(function () {
+        clearInputs();
+    });
+
+    $('.post-time-entry').click(function () {
+        var entry = createDataObject();
+        if (validateInputs()) {
+            $.ajax({
+                url: baseAdress + '/Entries',
+                type: 'POST',
+                data: entry,
+                contentType: 'application/json',
+                success: function () {
+                    $('.btn-close').click();
+                    $("#date").change();
+                    clearInputs();
+                },
+                error: function(response){
+                    var errorMessage = reponse.status + ': ' + response.statusText
+                    alert('Error - ' + errorMessage);
+                }
+            })
+
+        }
+
+    });
+})
 
 </script>
+
 <h2>My open projects</h2>
 
 <hr />
@@ -156,31 +214,31 @@
 
                     </td>
                     <td scope="row" class="time-entries">
-                        <text></text>
+                        <text>Loading...</text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
                     </td>
                     <td scope="row" class="time-entries">
-                        <text></text>
+                        <text>Loading...</text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
                     </td>
                     <td scope="row" class="time-entries">
-                        <text></text>
+                        <text>Loading...</text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
                     </td>
                     <td scope="row" class="time-entries">
-                        <text></text>
+                        <text>Loading...</text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
                     </td>
                     <td scope="row" class="time-entries">
-                        <text></text>
+                        <text>Loading...</text>
                         <button type="button" class="btn btn-success btn-add-entry" data-toggle="modal" data-target="#timeEntryForm">
                             Add time entry
                         </button>
@@ -205,16 +263,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalProjectTitle"></h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 style="color:red" class="validation"></h4>
             </div>
             <div class="modal-body">
                 <div class="form-group input-group">
                     <form action="/" method="post">
                         <input id="projectIdInput" type="hidden" name="projectId" value="" />
-                        <input class="input-group" type="number" min="0" name="hours" placeholder="Enter hours" /><br />
-                        <input class="input-group" type="text" name="description" placeholder="Enter description" /><br />
+                        <input id="hours-input" class="input-group" type="number" min="0" name="hours" placeholder="Enter hours" /><br />
+                        <input id="comment-input" class="input-group" type="text" name="description" placeholder="Enter description" /><br />
                         <h5>Select Issue</h5>
                         <select class="input-group issue-selector" name="issue">
                         </select><br />
@@ -227,8 +283,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary post-time-entry">Save changes</button>
             </div>
         </div>
     </div>

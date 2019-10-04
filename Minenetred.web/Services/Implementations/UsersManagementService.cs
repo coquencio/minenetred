@@ -26,7 +26,7 @@ namespace Minenetred.web.Services.Implementations
             _userService = userService;
         }
         
-        public bool CheckReisteredUser(string userEmail)
+        public bool IsUserRegistered(string userEmail)
         {
             var user = _context.Users.SingleOrDefault(u=>u.UserName==userEmail);
             if (user == null)
@@ -46,7 +46,7 @@ namespace Minenetred.web.Services.Implementations
             _context.SaveChanges();
         }
 
-        public bool CheckRedmineKey(string userEmail)
+        public bool HasRedmineKey(string userEmail)
         {
             if (_context.Users.SingleOrDefault(u => u.UserName == userEmail).RedmineKey == null)
                 return false;
@@ -73,10 +73,10 @@ namespace Minenetred.web.Services.Implementations
             return _encryptionService.Decrypt(EncryptedKey);
         }
 
-        public async Task AddRedmineIdAsync(string key)
+        public async Task AddRedmineIdAsync(string key, string email)
         {
             var redmineUser = await _userService.GetCurrentUserAsync(key);
-            var contextUser = _context.Users.SingleOrDefault(u=>u.UserName == UserPrincipal.Current.EmailAddress);
+            var contextUser = _context.Users.SingleOrDefault(u=>u.UserName == email);
             contextUser.RedmineId = redmineUser.User.Id;
             _context.Users.Update(contextUser);
             _context.SaveChanges();

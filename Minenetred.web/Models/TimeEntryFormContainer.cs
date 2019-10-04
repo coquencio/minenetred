@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Minenetred.web.Models
 {
-    public class ProjectDto
+    public class TimeEntryFormContainer
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int status { get; set; }
+        public TimeEntryFormDto TimeEntry { get; set; }
     }
 }
