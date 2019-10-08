@@ -19,14 +19,14 @@ namespace Minenetred.web.Infrastructure
 
             CreateMap<Activity, ActivityDto>();
             CreateMap<ActivityListResponse, ActivityViewModel>()
-                .ForMember(dto => dto.Activities, opt => opt.MapFrom(src => src.Time_Entry_Activities));
+                .ForMember(dto => dto.Activities, opt => opt.MapFrom(src => src.TimeEntryActivities));
 
             CreateMap<Issue, IssueDto>();
             CreateMap<IssueListResponse, IssueViewModel>();
             
             CreateMap<TimeEntry, Minenetred.web.Models.TimeEntryDto >();
             CreateMap<TimeEntryListResponse, TimeEntryViewModel>()
-                .ForMember(dto => dto.TimeEntries, opt => opt.MapFrom(src => src.Time_Entries));
+                .ForMember(dto => dto.TimeEntries, opt => opt.MapFrom(src => src.TimeEntries));
 
             CreateMap<TimeEntryFormDto, Redmine.library.Models.TimeEntryDto>();
             CreateMap<TimeEntryFormContainer, TimeEntryDtoContainer>();

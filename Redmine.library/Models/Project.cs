@@ -10,8 +10,8 @@ namespace Redmine.library.Models
         public string Name { get; set; }
         public string Identifier { get; set; }
         public string Description { get; set; }
-        public int status { get; set; }
-        public DateTime Created_on { get; set; }
-        public DateTime Updated_on { get; set; }
+        public int Status { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
     }
 }

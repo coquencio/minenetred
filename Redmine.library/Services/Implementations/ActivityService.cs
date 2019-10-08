@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Redmine.library.Core;
 using Redmine.library.Models;
 using System;
@@ -37,7 +38,18 @@ namespace Redmine.library.Services.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     toReturn = await response.Content.ReadAsStringAsync();
-                    var activityListResponse = JsonConvert.DeserializeObject<ActivityListResponse>(toReturn);
+                   var contractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new SnakeCaseNamingStrategy()
+                    };
+                    var activityListResponse = JsonConvert.DeserializeObject<ActivityListResponse>(
+                        toReturn,
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = contractResolver,
+                            Formatting = Formatting.Indented
+                        }
+                        );
                     return activityListResponse;
                 }
                 else

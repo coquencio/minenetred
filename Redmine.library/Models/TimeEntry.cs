@@ -7,7 +7,6 @@ namespace Redmine.library.Models
    public class TimeEntry
     {
         public int Id { get; set; }
-        public Project Project { get; set; }
         public Issue Issue { get; set; }
         public Activity Activity { get; set; }
         public float Hours { get; set; }

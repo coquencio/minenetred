@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Redmine.library.Core;
 using Redmine.library.Models;
 using Redmine.library.Services;
@@ -33,7 +34,17 @@ namespace Redmine.library.Services.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     toReturn = await response.Content.ReadAsStringAsync();
-                    var projectListResponse = JsonConvert.DeserializeObject<ProjectListResponse>(toReturn);
+                    var contractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new SnakeCaseNamingStrategy()
+                    };
+                    var projectListResponse = JsonConvert.DeserializeObject<ProjectListResponse>(
+                        toReturn,
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = contractResolver,
+                            Formatting = Formatting.Indented,
+                        });
                     return projectListResponse;
                 }
                 else

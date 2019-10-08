@@ -44,7 +44,17 @@ namespace Redmine.library.Services.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     toReturn = await response.Content.ReadAsStringAsync();
-                    var timeEntryListResponse = JsonConvert.DeserializeObject<TimeEntryListResponse>(toReturn);
+                    var contractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new SnakeCaseNamingStrategy()
+                    };
+                    var timeEntryListResponse = JsonConvert.DeserializeObject<TimeEntryListResponse>(
+                        toReturn,
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = contractResolver,
+                            Formatting = Formatting.Indented
+                        });
                     return timeEntryListResponse;
                 }
                 else
