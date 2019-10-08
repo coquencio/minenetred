@@ -32,7 +32,7 @@ namespace Minenetred.web.Services.Implementations
             };
             foreach (var project in projectList.Projects)
             {
-                if (project.status == 1)
+                if (project.Status == 1)
                 {
                     shapedList.Projects.Add(project);
                 }

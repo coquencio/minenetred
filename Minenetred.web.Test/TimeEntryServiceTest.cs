@@ -84,7 +84,7 @@ namespace Minenetred.web.Test
 
             var timeEntryResponse = new TimeEntryListResponse()
             {
-                Time_Entries = timeEntryListResponse,
+                TimeEntries = timeEntryListResponse,
             };
             async Task<TimeEntryListResponse> AssignResponse()
             {

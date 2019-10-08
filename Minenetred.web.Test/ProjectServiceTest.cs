@@ -35,8 +35,8 @@ namespace Minenetred.web.Test
             var openProject = new Mock<Project>();
             var closedProject = new Mock<Project>();
 
-            openProject.Object.status = 1;
-            closedProject.Object.status = 0;
+            openProject.Object.Status = 1;
+            closedProject.Object.Status = 0;
 
             var projectList = new List<Project>();
             projectList.Add(openProject.Object);
@@ -57,7 +57,7 @@ namespace Minenetred.web.Test
             var returnedShappedList = await _projectSerivce.GetOpenProjectsAsync(apiKey);
             foreach (var project in returnedShappedList.Projects)
             {
-                Assert.Equal(1, project.status);
+                Assert.Equal(1, project.Status);
             }
         }
     }
