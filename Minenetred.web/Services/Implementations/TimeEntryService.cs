@@ -18,28 +18,24 @@ namespace Minenetred.web.Services.Implementations
     {
         private readonly MinenetredContext _context;
         private readonly Redmine.library.Services.ITimeEntryService _timeEntryService;
-        private readonly IEncryptionService _encryptionService;
         private readonly IMapper _mapper;
         private readonly IUsersManagementService _usersManagementService;
 
         public TimeEntryService(
             MinenetredContext context,
             Redmine.library.Services.ITimeEntryService timeEntryService,
-            IEncryptionService encryptionService,
             IMapper mapper,
             IUsersManagementService usersManagementService
             )
         {
             _context = context;
             _timeEntryService = timeEntryService;
-            _encryptionService = encryptionService;
             _mapper = mapper;
             _usersManagementService = usersManagementService;
         }
 
-        public async Task<float> GetTimeEntryHoursPerDay(int projectId, string date)
+        public async Task<float> GetTimeEntryHoursPerDay(int projectId, string date, string user)
         {
-           var user = UserPrincipal.Current.EmailAddress;
            var key = _usersManagementService.GetUserKey(user);
            var redmineId = _context.Users.SingleOrDefault(u=>u.UserName == user).RedmineId;
            var response = await _timeEntryService.GetTimeEntriesAsync(key, redmineId, projectId, date);

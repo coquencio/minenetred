@@ -20,12 +20,10 @@ namespace Minenetred.web.Api
     public class TimeEntryController : Controller
     {
         private readonly ITimeEntryService _timeEntryService;
-
         public TimeEntryController(ITimeEntryService timeEntryService)
         {
             _timeEntryService = timeEntryService;
         }
-
         [Route("/Entries/{projectId}/{date}")]
         [Produces("application/json")]
         [ProducesResponseType(404)]
@@ -33,7 +31,7 @@ namespace Minenetred.web.Api
         [HttpGet]
         public async Task<ActionResult<float>> GetTimeSpentPerDate([FromRoute] int projectId, [FromRoute]  string date)
         {
-            var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, date);
+            var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, date, UserPrincipal.Current.EmailAddress);
             return Ok(toReturn);
         }
 

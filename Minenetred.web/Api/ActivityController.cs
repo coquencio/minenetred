@@ -33,7 +33,7 @@ namespace Minenetred.web.Api
         {
             try
             {
-                var toRetun = await _activityService.GetActivitiesAsync(projectId);
+                var toRetun = await _activityService.GetActivitiesAsync(projectId, UserPrincipal.Current.EmailAddress);
                 if (toRetun == null)
                 {
                     return NotFound();

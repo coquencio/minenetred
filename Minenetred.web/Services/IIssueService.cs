@@ -8,6 +8,6 @@ namespace Minenetred.web.Services
 {
     public interface IIssueService
     {
-        Task<IssueViewModel> GetIssuesAsync(int projectId);
+        Task<IssueViewModel> GetIssuesAsync(int projectId, string email);
     }
 }

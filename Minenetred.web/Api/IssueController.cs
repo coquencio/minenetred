@@ -36,7 +36,7 @@ namespace Minenetred.web.Api
         {
             try
             {
-                var toReturn = await _issueService.GetIssuesAsync(projectId);
+                var toReturn = await _issueService.GetIssuesAsync(projectId, UserPrincipal.Current.EmailAddress);
                 if (toReturn == null)
                 {
                     return NotFound();

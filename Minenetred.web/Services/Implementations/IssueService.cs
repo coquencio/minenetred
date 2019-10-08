@@ -31,9 +31,9 @@ namespace Minenetred.web.Services.Implementations
             _mapper = mapper;
             _usersManagementService = usersManagementService;
         }
-        public async Task<IssueViewModel> GetIssuesAsync(int projectId)
+        public async Task<IssueViewModel> GetIssuesAsync(int projectId, string email)
         {
-            var userEmail = UserPrincipal.Current.EmailAddress;
+            var userEmail = email;
             var user = _context.Users.SingleOrDefault(u => u.UserName == userEmail);
             var decryptedKey = _usersManagementService.GetUserKey(userEmail);
             var response = await _issueService.GetIssuesAsync(decryptedKey, user.RedmineId, projectId);

@@ -8,6 +8,6 @@ namespace Minenetred.web.Services
 {
     public interface IActivityService
     {
-        Task<ActivityViewModel> GetActivitiesAsync(int projectId);
+        Task<ActivityViewModel> GetActivitiesAsync(int projectId, string email);
     }
 }
