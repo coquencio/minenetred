@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
-namespace Minenetred.web.Migrations
+namespace Minenetred.Web.Migrations
 {
     public partial class updatedUsers : Migration
     {

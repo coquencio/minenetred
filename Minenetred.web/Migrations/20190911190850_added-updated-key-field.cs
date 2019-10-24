@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Minenetred.web.Migrations
+namespace Minenetred.Web.Migrations
 {
     public partial class addedupdatedkeyfield : Migration
     {

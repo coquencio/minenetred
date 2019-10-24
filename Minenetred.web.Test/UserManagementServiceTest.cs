@@ -1,17 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Minenetred.web.Context;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.Services;
-using Minenetred.web.Services.Implementations;
+using Minenetred.Web.Context;
+using Minenetred.Web.Infrastructure;
+using Minenetred.Web.Services.Implementations;
 using Moq;
-using Redmine.library.Models;
-using Redmine.library.Services;
-using Redmine.library.Services.Implementations;
-using System;
+using Redmine.Library.Models;
+using Redmine.Library.Services;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Minenetred.web.Test
+namespace Minenetred.Web.Test
 {
     public class UserManagementServiceTest
     {
@@ -19,7 +16,7 @@ namespace Minenetred.web.Test
         private EncryptionService _encryptionService;
         private UsersManagementService _usersManagementService;
         private Mock<IUserService> _userService;
-        
+
         public UserManagementServiceTest()
         {
             var options = new DbContextOptionsBuilder<MinenetredContext>()
@@ -33,7 +30,7 @@ namespace Minenetred.web.Test
                 _userService.Object
                 );
         }
-        
+
         [Fact]
         public void ShouldCheckIfUserExistAfterCreation()
         {
@@ -48,24 +45,22 @@ namespace Minenetred.web.Test
         {
             var userName = "TestUser2";
             var redMineKey = "TestKey";
-            
+
             _usersManagementService.RegisterUser(userName);
             _usersManagementService.UpdateKey(redMineKey, userName);
             Assert.True(_usersManagementService.HasRedmineKey(userName));
         }
+
         [Fact]
         public async Task ShouldRegisterRedmineIdFromLibraryServiceAsync()
         {
             var testKey = "TestKey";
             var testUser = "TestUser3";
-            var returnedUser = new UserResponse()
+            var returnedUser = new UserServiceModel()
             {
-                User = new UserServiceModel()
-                {
-                    Id = 5
-                },
+                Id = 5
             };
-            async Task<UserResponse> AssignResponse()
+            async Task<UserServiceModel> AssignResponse()
             {
                 await Task.Delay(0);
                 return returnedUser;
@@ -76,6 +71,5 @@ namespace Minenetred.web.Test
             var userToCheck = await _context.Users.SingleOrDefaultAsync(c => c.RedmineId != 0);
             Assert.Equal(5, userToCheck.RedmineId);
         }
-
     }
 }

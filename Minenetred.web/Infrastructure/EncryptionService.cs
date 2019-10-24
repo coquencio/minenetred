@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Minenetred.web.Infrastructure
+namespace Minenetred.Web.Infrastructure
 {
     public class EncryptionService : IEncryptionService
     {
         private string _encryptionKey;
+
         public EncryptionService(string encryptionKey)
         {
             _encryptionKey = encryptionKey;
         }
+
         public string Encrypt(string encryptString)
         {
             byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);

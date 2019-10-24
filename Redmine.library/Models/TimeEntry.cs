@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Redmine.library.Models
+namespace Redmine.Library.Models
 {
-   public class TimeEntry
+    public class TimeEntry
     {
         public int Id { get; set; }
         public Issue Issue { get; set; }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Minenetred.web.Context;
+using Minenetred.Web.Context;
 
-namespace Minenetred.web.Migrations
+namespace Minenetred.Web.Migrations
 {
     [DbContext(typeof(MinenetredContext))]
     [Migration("20190909203511_test")]

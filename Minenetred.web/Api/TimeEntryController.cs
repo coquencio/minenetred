@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.AccountManagement;
-using System.Linq;
+﻿using System.DirectoryServices.AccountManagement;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Minenetred.web.Context;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.Models;
-using Minenetred.web.Services;
-using Minenetred.web.ViewModels;
-using Redmine.library.Models;
+using Minenetred.Web.Models;
+using Minenetred.Web.Services;
+using Newtonsoft.Json.Linq;
 
-namespace Minenetred.web.Api
+namespace Minenetred.Web.Api
 {
     [Authorize]
     public class TimeEntryController : Controller
@@ -39,7 +32,7 @@ namespace Minenetred.web.Api
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
         [HttpPost]
-        public async Task<HttpStatusCode> AddTimeEntryAsync([FromBody]TimeEntryFormDto entry)
+        public async Task<HttpStatusCode> AddTimeEntryAsync([FromBody]JObject entry)
         {
             if (entry == null)
             {

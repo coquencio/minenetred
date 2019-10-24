@@ -1,26 +1,23 @@
 ﻿using AutoMapper;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.Models;
-using Minenetred.web.Services;
-using Minenetred.web.Services.Implementations;
+using Minenetred.Web.Infrastructure;
+using Minenetred.Web.Services.Implementations;
 using Moq;
-using Redmine.library.Models;
-using System;
+using Redmine.Library.Models;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Minenetred.web.Test
+namespace Minenetred.Web.Test
 {
     public class ProjectServiceTest
     {
         private ProjectService _projectSerivce;
-        private Mock<Redmine.library.Services.IProjectService> _libraryProjectService;
+        private Mock<Redmine.Library.Services.IProjectService> _libraryProjectService;
         private IMapper _mapper;
+
         public ProjectServiceTest()
         {
-            _libraryProjectService = new Mock<Redmine.library.Services.IProjectService>();
+            _libraryProjectService = new Mock<Redmine.Library.Services.IProjectService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
@@ -42,20 +39,16 @@ namespace Minenetred.web.Test
             projectList.Add(openProject.Object);
             projectList.Add(closedProject.Object);
 
-            var FullProjectList = new ProjectListResponse()
-            {
-                Projects = projectList,
-            };
-            async Task<ProjectListResponse> AssignResponse()
+            async Task<List<Project>> AssignResponse()
             {
                 await Task.Delay(0);
-                return FullProjectList;
+                return projectList;
             }
             var apiKey = "TestKey";
             _libraryProjectService.Setup(c => c.GetProjectsAsync(apiKey)).Returns(AssignResponse());
 
             var returnedShappedList = await _projectSerivce.GetOpenProjectsAsync(apiKey);
-            foreach (var project in returnedShappedList.Projects)
+            foreach (var project in returnedShappedList)
             {
                 Assert.Equal(1, project.Status);
             }

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Redmine.library\Redmine.library.csproj" />
+    <ProjectReference Include="..\Redmine.Library\Redmine.Library.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,4 @@
-﻿
-
-
-@model Minenetred.web.ViewModels.ProjectsViewModel
+﻿@model List<Minenetred.Web.Models.ProjectDto>
 
 @{
     ViewData["Title"] = "ProjectsList";
@@ -40,7 +37,7 @@
 
     }
     function setTotalHoursLoggedPerProject(sum, projectId, actualIndex) {
-        $('#' + projectId).children('td:eq(' + actualIndex + ')').find('text').html('Hours logged:<br/> <h4>' + sum + '</h4> ');
+        $('#' + projectId).children('td:eq(' + actualIndex + ')').find('text').html('Hours logged:<br /> <h4>' + sum + '</h4> ');
     }
 
     function setValuesToForm(button) {
@@ -62,11 +59,11 @@
 
     function createDataObject() {
         return JSON.stringify({
-                issueId: parseInt($('.issue-selector').val()),
-                spentOn: $('#dateText').find('text').text(),
-                hours: parseFloat($('#hours-input').val()),
-                activityId: parseInt($('.activity-selector').val()),
-                comments: $('#comment-input').val()
+            issueId: parseInt($('.issue-selector').val()),
+            spentOn: $('#dateText').find('text').text(),
+            hours: parseFloat($('#hours-input').val()),
+            activityId: parseInt($('.activity-selector').val()),
+            comments: $('#comment-input').val()
         })
 
     }
@@ -84,10 +81,9 @@
     }
 </script>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
         var baseAdress = document.location.origin;
         var weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
 
         $('#date').change(function () {
             displayTable();
@@ -108,9 +104,9 @@ $(document).ready(function () {
                             setTotalHoursLoggedPerProject(result, projectId, actualIndex);
                             setTotalHoursPerDay();
                         },
-                        error: function(response){
-                             var errorMessage = reponse.status + ': ' + response.statusText
-                             alert('Error - ' + errorMessage);
+                        error: function (response) {
+                            var errorMessage = reponse.status + ': ' + response.statusText
+                            alert('Error - ' + errorMessage);
                         }
 
                     })
@@ -125,9 +121,9 @@ $(document).ready(function () {
                 url: baseAdress + '/Issues/' + projectId,
                 dataType: 'json',
                 success: function (result) {
-                    setSelector('.issue-selector', result.issues);
+                    setSelector('.issue-selector', result);
                 },
-                error: function(response){
+                error: function (response) {
                     var errorMessage = reponse.status + ': ' + response.statusText
                     alert('Error - ' + errorMessage);
                 }
@@ -136,45 +132,61 @@ $(document).ready(function () {
                 url: baseAdress + '/Activities/' + projectId,
                 dataType: 'json',
                 success: function (result) {
-                    setSelector('.activity-selector', result.activities);
+                    setSelector('.activity-selector', result);
                 },
-                error: function(response){
+                error: function (response) {
                     var errorMessage = reponse.status + ': ' + response.statusText
                     alert('Error - ' + errorMessage);
                 }
             });
         });
 
-    
-    $('.btn-close').click(function () {
-        clearInputs();
-    });
+        $('.btn-close').click(function () {
+            clearInputs();
+        });
 
-    $('.post-time-entry').click(function () {
-        var entry = createDataObject();
-        if (validateInputs()) {
-            $.ajax({
-                url: baseAdress + '/Entries',
-                type: 'POST',
-                data: entry,
-                contentType: 'application/json',
-                success: function () {
-                    $('.btn-close').click();
-                    $("#date").change();
-                    clearInputs();
-                },
-                error: function(response){
-                    var errorMessage = reponse.status + ': ' + response.statusText
-                    alert('Error - ' + errorMessage);
-                }
-            })
+        $('.post-time-entry').click(function () {
+            var entry = createDataObject();
+            if (validateInputs()) {
+                $.ajax({
+                    url: baseAdress + '/Entries',
+                    type: 'POST',
+                    data: entry,
+                    contentType: 'application/json',
+                    success: function () {
+                        $('.btn-close').click();
+                        $("#date").change();
+                        clearInputs();
+                    },
+                    error: function (response) {
+                        var errorMessage = reponse.status + ': ' + response.statusText
+                        alert('Error - ' + errorMessage);
+                    }
+                })
 
-        }
+            }
 
-    });
-})
-
+        });
+    })
 </script>
+
+@foreach (var alert in ViewBag.Warnings)
+{
+    if (alert.Value == 0)
+    {
+        <div class="alert alert-warning alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Warning</strong> You have less than 8 hours logged corresponding to the date: @alert.Key. The ideal hours per day should be at least 8.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Warning</strong> You have hours logged in the date: @alert.Key, which seems to be on weekend.
+        </div>
+    }
+}
 
 <h2>My open projects</h2>
 
@@ -200,18 +212,16 @@ $(document).ready(function () {
                 <th class="tableHeader"></th>
                 <th class="tableHeader"></th>
                 <th class="tableHeader"></th>
-
             </tr>
         </thead>
 
         <tbody>
-            @foreach (var project in Model.Projects)
+            @foreach (var project in Model)
             {
                 <tr class="table-row" id="@project.Id">
                     <td scope="row" style="width:25%">
                         @project.Name
                         <input type="hidden" value="@project.Id">
-
                     </td>
                     <td scope="row" class="time-entries">
                         <text>Loading...</text>

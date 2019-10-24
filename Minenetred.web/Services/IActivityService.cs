@@ -1,13 +1,11 @@
-﻿using Minenetred.web.ViewModels;
-using System;
+﻿using Minenetred.Web.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Minenetred.web.Services
+namespace Minenetred.Web.Services
 {
     public interface IActivityService
     {
-        Task<ActivityViewModel> GetActivitiesAsync(int projectId, string email);
+        Task<List<ActivityDto>> GetActivitiesAsync(int projectId, string email);
     }
 }

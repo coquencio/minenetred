@@ -1,19 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Minenetred.Web.Models;
+using Minenetred.Web.Services;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Minenetred.web.Context;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.Models;
-using Minenetred.web.Services;
-using Minenetred.web.ViewModels;
-using Redmine.library.Models;
 
-namespace Minenetred.web.Api
+namespace Minenetred.Web.Api
 {
     [Authorize]
     public class ActivityController : Controller
@@ -24,12 +18,13 @@ namespace Minenetred.web.Api
         {
             _activityService = activityService;
         }
+
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
         [Route("/Activities/{projectId}")]
         [HttpGet]
-        public async Task<ActionResult<ActivityViewModel>> GetActivitiesAsync([FromRoute] int projectId)
+        public async Task<ActionResult<List<ActivityDto>>> GetActivitiesAsync([FromRoute] int projectId)
         {
             try
             {

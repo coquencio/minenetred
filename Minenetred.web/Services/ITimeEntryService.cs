@@ -1,16 +1,18 @@
-﻿using Minenetred.web.Models;
-using Minenetred.web.ViewModels;
+﻿using Minenetred.Web.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Minenetred.web.Services
+namespace Minenetred.Web.Services
 {
     public interface ITimeEntryService
     {
         Task<float> GetTimeEntryHoursPerDay(int projectId, string date, string user);
-        Task<HttpStatusCode> AddTimeEntryAsync(TimeEntryFormDto entry);
+
+        Task<HttpStatusCode> AddTimeEntryAsync(JObject entry);
+
+        Task<Dictionary<String, int>> GetUnloggedDaysAsync(int UserId, string authKey, DateTime today);
     }
 }

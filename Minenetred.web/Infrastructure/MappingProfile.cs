@@ -1,35 +1,20 @@
 ﻿using AutoMapper;
-using Minenetred.web.Models;
-using Minenetred.web.ViewModels;
-using Redmine.library.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Minenetred.Web.Models;
+using Redmine.Library.Models;
 
-namespace Minenetred.web.Infrastructure
+namespace Minenetred.Web.Infrastructure
 {
-    public class MappingProfile :Profile 
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
             CreateMap<Project, ProjectDto>();
-            CreateMap<ProjectListResponse, ProjectsViewModel>()
-                .ForMember(dto => dto.Projects, opt => opt.MapFrom(src => src.Projects));
 
             CreateMap<Activity, ActivityDto>();
-            CreateMap<ActivityListResponse, ActivityViewModel>()
-                .ForMember(dto => dto.Activities, opt => opt.MapFrom(src => src.TimeEntryActivities));
 
             CreateMap<Issue, IssueDto>();
-            CreateMap<IssueListResponse, IssueViewModel>();
-            
-            CreateMap<TimeEntry, Minenetred.web.Models.TimeEntryDto >();
-            CreateMap<TimeEntryListResponse, TimeEntryViewModel>()
-                .ForMember(dto => dto.TimeEntries, opt => opt.MapFrom(src => src.TimeEntries));
 
-            CreateMap<TimeEntryFormDto, Redmine.library.Models.TimeEntryDto>();
-            CreateMap<TimeEntryFormContainer, TimeEntryDtoContainer>();
+            CreateMap<TimeEntry, Minenetred.Web.Models.TimeEntryDto>();
         }
     }
 }

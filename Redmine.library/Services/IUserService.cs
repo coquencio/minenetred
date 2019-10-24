@@ -1,13 +1,10 @@
-﻿using Redmine.library.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Redmine.Library.Models;
 using System.Threading.Tasks;
 
-namespace Redmine.library.Services
+namespace Redmine.Library.Services
 {
     public interface IUserService
     {
-        Task<UserResponse> GetCurrentUserAsync(string authKey);
+        Task<UserServiceModel> GetCurrentUserAsync(string authKey);
     }
 }

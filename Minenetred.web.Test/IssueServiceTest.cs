@@ -1,25 +1,24 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Minenetred.web.Context;
-using Minenetred.web.Context.ContextModels;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.Services;
-using Minenetred.web.Services.Implementations;
+using Minenetred.Web.Context;
+using Minenetred.Web.Context.ContextModels;
+using Minenetred.Web.Infrastructure;
+using Minenetred.Web.Services;
+using Minenetred.Web.Services.Implementations;
 using Moq;
-using Redmine.library.Models;
+using Redmine.Library.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Minenetred.web.Test
+namespace Minenetred.Web.Test
 {
     public class IssueServiceTest
     {
         private IssueService _issueService;
         private MinenetredContext _context;
-        private Mock<Redmine.library.Services.IIssueService> _issueLibraryService;
+        private Mock<Redmine.Library.Services.IIssueService> _issueLibraryService;
         private IMapper _mapper;
         private Mock<IUsersManagementService> _usersManagementService;
 
@@ -34,7 +33,7 @@ namespace Minenetred.web.Test
 
             _context = new MinenetredContext(options);
             _mapper = mappingConfig.CreateMapper();
-            _issueLibraryService = new Mock<Redmine.library.Services.IIssueService>();
+            _issueLibraryService = new Mock<Redmine.Library.Services.IIssueService>();
             _usersManagementService = new Mock<IUsersManagementService>();
             _issueService = new IssueService(
                 _context,
@@ -67,33 +66,27 @@ namespace Minenetred.web.Test
                 Id = 1,
                 Subject = "subject test 1",
                 Description = "description test 1",
-                
             };
             var issueForTest2 = new Issue()
             {
                 Id = 2,
                 Subject = "subject test 2",
                 Description = "description test 2",
-
             };
 
             var listToAdd = new List<Issue>();
             listToAdd.Add(issueForTest1);
             listToAdd.Add(issueForTest2);
 
-            var listResponse = new IssueListResponse()
-            {
-                Issues = listToAdd,
-            };
-            async Task<IssueListResponse> AssignResponse()
+            async Task<List<Issue>> AssignResponse()
             {
                 await Task.Delay(0);
-                return listResponse;
+                return listToAdd;
             }
             _issueLibraryService.Setup(s => s.GetIssuesAsync(keyForTest, redmineIdForTest, projectIdForTest)).Returns(AssignResponse());
             var issueViewModel = await _issueService.GetIssuesAsync(projectIdForTest, userNameForTest);
             var counter = 1;
-            foreach (var issue in issueViewModel.Issues)
+            foreach (var issue in issueViewModel)
             {
                 if (counter == 1)
                 {

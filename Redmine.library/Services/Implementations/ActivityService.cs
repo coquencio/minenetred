@@ -1,66 +1,47 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Redmine.library.Core;
-using Redmine.library.Models;
+using Newtonsoft.Json.Linq;
+using Redmine.Library.Core;
+using Redmine.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Redmine.library.Services.Implementations
+namespace Redmine.Library.Services.Implementations
 {
     public class ActivityService : IActivityService
     {
         private readonly HttpClient _client;
+        private readonly IUriHelper _uriHelper;
+        private readonly ISerializerHelper _serializerHelper;
 
-        public ActivityService(HttpClient client)
+        public ActivityService(HttpClient client, IUriHelper uriHelper, ISerializerHelper serializerHelper)
         {
             _client = client;
+            _uriHelper = uriHelper;
+            _serializerHelper = serializerHelper;
         }
-        public async Task<ActivityListResponse> GetActivityListResponseAsync(string authKey, int projectId)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(authKey))
-                    throw new ArgumentNullException(Constants.nullKeyException);
 
-                var toReturn = "";
-                var requestUri = 
-                    Constants.Activites +
-                    Constants.json +
-                    "?key=" +
-                    authKey +
-                    "&" +
-                    Constants.projectId +
-                    projectId;
-                HttpResponseMessage response = await _client.GetAsync(requestUri);
-                if (response.IsSuccessStatusCode)
-                {
-                    toReturn = await response.Content.ReadAsStringAsync();
-                   var contractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
-                    var activityListResponse = JsonConvert.DeserializeObject<ActivityListResponse>(
-                        toReturn,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver = contractResolver,
-                            Formatting = Formatting.Indented
-                        }
-                        );
-                    return activityListResponse;
-                }
-                else
-                {
-                    var errorMsg = await response.Content.ReadAsStringAsync();
-                    throw new Exception(errorMsg);
-                }   
-            }
-            catch (Exception ex)
+        public async Task<List<Activity>> GetActivityListResponseAsync(string authKey, int projectId)
+        {
+            if (string.IsNullOrEmpty(authKey))
+                throw new ArgumentNullException(nameof(authKey));
+
+            var toReturn = "";
+            var requestUri = _uriHelper.Activities(projectId, authKey);
+            HttpResponseMessage response = await _client.GetAsync(requestUri);
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception(ex.Message);
+                toReturn = await response.Content.ReadAsStringAsync();
+                var parsedObject = JObject.Parse(toReturn);
+                var timeEntriesArray = parsedObject["time_entry_activities"].ToString();
+                var activityListResponse = JsonConvert.DeserializeObject<List<Activity>>(timeEntriesArray, _serializerHelper.SerializerSettings());
+                return activityListResponse;
+            }
+            else
+            {
+                var errorMsg = await response.Content.ReadAsStringAsync();
+                throw new Exception(errorMsg);
             }
         }
     }

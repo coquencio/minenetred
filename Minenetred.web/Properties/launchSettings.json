@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Minenetred.web": {
+    "Minenetred.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

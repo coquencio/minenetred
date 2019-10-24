@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Minenetred.web.Context.ContextModels;
+using Minenetred.Web.Context.ContextModels;
 
-namespace Minenetred.web.Context
+namespace Minenetred.Web.Context
 {
     public class MinenetredContext : DbContext
     {

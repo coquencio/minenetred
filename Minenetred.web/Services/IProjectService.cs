@@ -1,13 +1,11 @@
-﻿using Minenetred.web.ViewModels;
-using System;
+﻿using Minenetred.Web.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Minenetred.web.Services
+namespace Minenetred.Web.Services
 {
     public interface IProjectService
     {
-        Task<ProjectsViewModel> GetOpenProjectsAsync(string apiKey);
+        Task<List<ProjectDto>> GetOpenProjectsAsync(string apiKey);
     }
 }

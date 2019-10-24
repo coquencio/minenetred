@@ -1,27 +1,23 @@
 ﻿using AutoMapper;
-using Minenetred.web.Context;
-using Minenetred.web.Infrastructure;
-using Minenetred.web.ViewModels;
-using Redmine.library.Models;
-using Redmine.library.Services;
-using System;
+using Minenetred.Web.Context;
+using Minenetred.Web.Models;
+using Redmine.Library.Models;
 using System.Collections.Generic;
-using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Minenetred.web.Services.Implementations
+namespace Minenetred.Web.Services.Implementations
 {
     public class IssueService : IIssueService
     {
         private readonly MinenetredContext _context;
-        private readonly Redmine.library.Services.IIssueService _issueService;
+        private readonly Redmine.Library.Services.IIssueService _issueService;
         private readonly IMapper _mapper;
-        IUsersManagementService _usersManagementService;
+        private IUsersManagementService _usersManagementService;
 
         public IssueService(
             MinenetredContext context,
-            Redmine.library.Services.IIssueService issueService,
+            Redmine.Library.Services.IIssueService issueService,
             IMapper mapper,
             IUsersManagementService usersManagementService
             )
@@ -31,13 +27,14 @@ namespace Minenetred.web.Services.Implementations
             _mapper = mapper;
             _usersManagementService = usersManagementService;
         }
-        public async Task<IssueViewModel> GetIssuesAsync(int projectId, string email)
+
+        public async Task<List<IssueDto>> GetIssuesAsync(int projectId, string email)
         {
             var userEmail = email;
             var user = _context.Users.SingleOrDefault(u => u.UserName == userEmail);
             var decryptedKey = _usersManagementService.GetUserKey(userEmail);
             var response = await _issueService.GetIssuesAsync(decryptedKey, user.RedmineId, projectId);
-            var toReturn = _mapper.Map<IssueListResponse, IssueViewModel>(response);
+            var toReturn = _mapper.Map<List<Issue>, List<IssueDto>>(response);
             return toReturn;
         }
     }

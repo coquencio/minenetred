@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Minenetred.web</title>
+    <title>@ViewData["Title"] - Minenetred.Web</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,21 +26,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Minenetred.web</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Minenetred.Web</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     @{
                         if (User.Identity.Name != null)
                         {
-                            <li><a asp-area="" asp-controller="Projects" asp-action="GetProjectsAsync">Projects</a></li>
-                            <li><a asp-area="" asp-controller="Projects" asp-action="AddKey">Api Access Key</a></li>
+                        <li><a asp-area="" asp-controller="Projects" asp-action="GetProjectsAsync">Projects</a></li>
+                        <li><a asp-area="" asp-controller="Projects" asp-action="AddKey">Api Access Key</a></li>
                         }
 
                     }
-
                 </ul>
-                </div>
+            </div>
         </div>
     </nav>
 
@@ -50,7 +49,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - Minenetred.web</p>
+            <p>&copy; 2019 - Minenetred.Web</p>
         </footer>
     </div>
 
@@ -74,7 +73,6 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
     </environment>
 
     @RenderSection("Scripts", required: false)

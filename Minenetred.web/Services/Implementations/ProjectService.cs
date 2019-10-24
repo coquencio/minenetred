@@ -1,20 +1,18 @@
 ﻿using AutoMapper;
-using Minenetred.web.Models;
-using Minenetred.web.ViewModels;
-using Redmine.library.Models;
-using System;
+using Minenetred.Web.Models;
+using Redmine.Library.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Minenetred.web.Services.Implementations
+namespace Minenetred.Web.Services.Implementations
 {
     public class ProjectService : IProjectService
     {
-        private readonly Redmine.library.Services.IProjectService _projectService;
+        private readonly Redmine.Library.Services.IProjectService _projectService;
         private readonly IMapper _mapper;
+
         public ProjectService(
-            Redmine.library.Services.IProjectService projectService,
+            Redmine.Library.Services.IProjectService projectService,
             IMapper mapper
             )
         {
@@ -22,19 +20,17 @@ namespace Minenetred.web.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ProjectsViewModel> GetOpenProjectsAsync(string apiKey)
+        public async Task<List<ProjectDto>> GetOpenProjectsAsync(string apiKey)
         {
             var response = await _projectService.GetProjectsAsync(apiKey);
-            var projectList = _mapper.Map<ProjectListResponse, ProjectsViewModel>(response);
-            var shapedList = new ProjectsViewModel()
-            {
-                Projects = new List<ProjectDto>(),
-            };
-            foreach (var project in projectList.Projects)
+            var projectList = _mapper.Map<List<Project>, List<ProjectDto>>(response);
+            var shapedList = new List<ProjectDto>();
+
+            foreach (var project in projectList)
             {
                 if (project.Status == 1)
                 {
-                    shapedList.Projects.Add(project);
+                    shapedList.Add(project);
                 }
             }
             return shapedList;

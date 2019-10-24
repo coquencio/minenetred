@@ -1,13 +1,11 @@
-﻿using Redmine.library.Models;
-using System;
+﻿using Redmine.Library.Models;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Redmine.library.Services
+namespace Redmine.Library.Services
 {
     public interface IProjectService
     {
-        Task<ProjectListResponse> GetProjectsAsync(string authKey);
+        Task<List<Project>> GetProjectsAsync(string authKey);
     }
 }

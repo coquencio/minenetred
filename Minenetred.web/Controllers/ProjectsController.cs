@@ -1,42 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Minenetred.Web.Models;
+using Minenetred.Web.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Redmine.library;
-using Minenetred.web.Models;
-using Redmine.library.Models;
-using Minenetred.web.ViewModels;
-using AutoMapper;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Minenetred.web.Context;
-using Minenetred.web.Context.ContextModels;
-using Minenetred.web.Infrastructure;
 using System.DirectoryServices.AccountManagement;
-using Minenetred.web.Services;
+using System.Threading.Tasks;
 
-namespace Minenetred.web.Controllers
+namespace Minenetred.Web.Controllers
 {
     [Authorize]
-    [ApiExplorerSettings (IgnoreApi =true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectService;
         private readonly IUsersManagementService _userManagementService;
+        private readonly ITimeEntryService _timeEntryService;
 
         public ProjectsController(
             IProjectService service,
-            IUsersManagementService userManagementService
+            IUsersManagementService userManagementService,
+            ITimeEntryService timeEntryService
             )
         {
             _projectService = service;
             _userManagementService = userManagementService;
+            _timeEntryService = timeEntryService;
         }
 
         [Route("/")]
         [HttpGet]
-        public async Task<ActionResult<ProjectsViewModel>> GetProjectsAsync()
+        public async Task<ActionResult<List<ProjectDto>>> GetProjectsAsync()
         {
             try
             {
@@ -49,15 +43,16 @@ namespace Minenetred.web.Controllers
 
                 var decryptedKey = _userManagementService.GetUserKey(userName);
                 var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
+                ViewBag.Warnings = await _timeEntryService.GetUnloggedDaysAsync(_userManagementService.GetRedmineId(userName: userName), decryptedKey, DateTime.Today);
                 return View(projectList);
             }
             catch (Exception)
             {
-                return RedirectToAction("AddKey", new {msj = "Add a valid key"});
+                return RedirectToAction("AddKey", new { msj = "Add a valid key" });
             }
         }
+
         [Route("/AccessKey")]
-        
         public IActionResult AddKey(string msj = null)
         {
             var userName = UserPrincipal.Current.EmailAddress;
@@ -77,7 +72,7 @@ namespace Minenetred.web.Controllers
                 ViewBag.key = denryptionKey;
             }
             return View();
-        } 
+        }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRedmineKeyAsync(string Redminekey)
@@ -93,7 +88,7 @@ namespace Minenetred.web.Controllers
             }
             catch (Exception)
             {
-                return RedirectToAction("AddKey", new {msj="Add a valid key"});
+                return RedirectToAction("AddKey", new { msj = "Add a valid key" });
             }
         }
     }

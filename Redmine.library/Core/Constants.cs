@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Redmine.library.Core
+﻿namespace Redmine.Library.Core
 {
     public static class Constants
     {
-        public const string projects = "projects";
-        public const string json = ".json";
-        public const string nullKeyException = "Key hasn't been implemented yet";
-        public const string issues = "issues";
-        public const string projectId = "project_id=";
+        public const string Projects = "projects";
+        public const string Json = ".json";
+        public const string NullKeyException = "Key hasn't been implemented yet";
+        public const string Issues = "issues";
+        public const string ProjectId = "project_id=";
+        public const string Key = "key=";
+        public const string AssignedTo = "assigned_to_id=";
         public const string Activites = "enumerations/time_entry_activities";
-        public const string timeEntries = "time_entries";
-        public const string currentUser = "users/current";
+        public const string TimeEntries = "time_entries";
+        public const string UserId = "user_id=";
+        public const string CurrentUser = "users/current";
     }
 }

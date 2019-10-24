@@ -1,61 +1,47 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using Redmine.library.Core;
-using Redmine.library.Models;
-using Redmine.library.Services;
+using Redmine.Library.Core;
+using Redmine.Library.Models;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Redmine.library.Services.Implementations
+namespace Redmine.Library.Services.Implementations
 {
     public class ProjectService : IProjectService
     {
         private readonly HttpClient _client;
+        private readonly IUriHelper _uriHelper;
+        private readonly ISerializerHelper _serializerHelper;
 
-        public ProjectService(HttpClient client)
+        public ProjectService(HttpClient client, IUriHelper uriHelper, ISerializerHelper serializerHelper)
         {
             _client = client;
+            _uriHelper = uriHelper;
+            _serializerHelper = serializerHelper;
         }
 
-        public async Task<ProjectListResponse> GetProjectsAsync(string authKey)
+        public async Task<List<Project>> GetProjectsAsync(string authKey)
         {
-            try
-            {
-                if (authKey == null || authKey.Equals(""))
-                    throw new ArgumentNullException(Constants.nullKeyException);
+            if (authKey == null || authKey.Equals(""))
+                throw new ArgumentNullException(nameof(authKey));
 
-                var toReturn = "";
-                var requestUri = Constants.projects + Constants.json+ "?key=" + authKey;
-                HttpResponseMessage response = await _client.GetAsync(requestUri);
-                if (response.IsSuccessStatusCode)
-                {
-                    toReturn = await response.Content.ReadAsStringAsync();
-                    var contractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
-                    var projectListResponse = JsonConvert.DeserializeObject<ProjectListResponse>(
-                        toReturn,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver = contractResolver,
-                            Formatting = Formatting.Indented,
-                        });
-                    return projectListResponse;
-                }
-                else
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception(errorMessage);
-                }
-            }
-            catch (Exception ex)
+            var toReturn = "";
+            var requestUri = _uriHelper.Projects(authKey);
+            HttpResponseMessage response = await _client.GetAsync(requestUri);
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception(ex.Message); 
+                toReturn = await response.Content.ReadAsStringAsync();
+                var jsonObject = JObject.Parse(toReturn);
+                var projects = jsonObject["projects"].ToString();
+                var projectListResponse = JsonConvert.DeserializeObject<List<Project>>(projects, _serializerHelper.SerializerSettings());
+                return projectListResponse;
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                throw new Exception(errorMessage);
             }
         }
     }

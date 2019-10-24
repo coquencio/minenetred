@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Minenetred.web.Context;
+using Minenetred.Web.Context;
 
-namespace Minenetred.web.Migrations
+namespace Minenetred.Web.Migrations
 {
     [DbContext(typeof(MinenetredContext))]
     partial class MinenetredContextModelSnapshot : ModelSnapshot
@@ -19,7 +19,7 @@ namespace Minenetred.web.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Minenetred.web.Context.ContextModels.User", b =>
+            modelBuilder.Entity("Minenetred.Web.Context.ContextModels.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd();
