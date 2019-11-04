@@ -4,6 +4,7 @@
     ViewData["Title"] = "ProjectsList";
 }
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 <script>
     function displayTable() {
         if ($('.datesTable').css('display') == 'none') {
@@ -50,10 +51,15 @@
         $('#projectIdInput').val(projectId);
     }
 
-    function setSelector(className, type) {
+    function setSelector(className, type, projectId) {
         $(className).html('');
         $.each(type, function (index, object) {
-            $(className).html($(className).html() + '<option value="' + object.id + '">' + Object.values(object)[1] + '</option>')
+            if (object.ProjectId == projectId) {
+                $.each(Object.values(object)[1], function (index, _object) {
+                    $(className).html($(className).html() + '<option value="' + _object.Id + '">' + Object.values(_object)[0] + '</option>');
+                });
+            }
+
         });
     }
 
@@ -84,6 +90,50 @@
     $(document).ready(function () {
         var baseAdress = document.location.origin;
         var weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        @{
+            var scriptA = "var activities = [";
+            foreach (var activity in ViewBag.activities)
+            {
+                var listedActivities = "";
+                foreach (var listedAct in activity.Value)
+                {
+                    var array = "{Name:\"" + listedAct.Name + "\", Id:" + listedAct.Id + "}";
+                    listedActivities += array + ",";
+                }
+                listedActivities = listedActivities.Substring(0, listedActivities.Length - 1);
+                var output = "{ProjectId:" + activity.Key + ", activities : [" + listedActivities + "]}";
+                if (!activity.Equals(ViewBag.lastAct))
+                {
+                    output += ",";
+                }
+
+                scriptA += output;
+            }
+            scriptA += "];";
+            @Html.Raw(scriptA);
+        }
+        @{
+            var scriptI = "var issues = [";
+            foreach (var issue in ViewBag.issues)
+            {
+                var listedIssues = "";
+                foreach (var listedI in issue.Value)
+                {
+                    var array = "{Name:\"" + listedI.Subject + "\", Id:" + listedI.Id + "}";
+                    listedIssues += array + ",";
+                }
+                listedIssues = listedIssues.Length>1? listedIssues.Substring(0, listedIssues.Length - 1) : "";
+                var output = "{ProjectId:" + issue.Key + ", Issues : [" + listedIssues + "]}";
+                if (!issue.Equals(ViewBag.lastIss))
+                {
+                    output += ",";
+                }
+
+                scriptI += output;
+            }
+            scriptI += "];";
+            @Html.Raw(scriptI);
+        }
 
         $('#date').change(function () {
             displayTable();
@@ -117,54 +167,41 @@
         $('.btn-add-entry').click(function () {
             setValuesToForm(this);
             var projectId = $('#projectIdInput').val();
-            $.ajax({
-                url: baseAdress + '/Issues/' + projectId,
-                dataType: 'json',
-                success: function (result) {
-                    setSelector('.issue-selector', result);
-                },
-                error: function (response) {
-                    var errorMessage = reponse.status + ': ' + response.statusText
-                    alert('Error - ' + errorMessage);
-                }
-            })
-            $.ajax({
-                url: baseAdress + '/Activities/' + projectId,
-                dataType: 'json',
-                success: function (result) {
-                    setSelector('.activity-selector', result);
-                },
-                error: function (response) {
-                    var errorMessage = reponse.status + ': ' + response.statusText
-                    alert('Error - ' + errorMessage);
-                }
-            });
+            setSelector('.issue-selector',issues , projectId);
+            setSelector('.activity-selector', activities, projectId);
         });
+
 
         $('.btn-close').click(function () {
             clearInputs();
         });
 
         $('.post-time-entry').click(function () {
+            var button = $('.post-time-entry');
             var entry = createDataObject();
             if (validateInputs()) {
-                $.ajax({
-                    url: baseAdress + '/Entries',
-                    type: 'POST',
-                    data: entry,
-                    contentType: 'application/json',
-                    success: function () {
-                        $('.btn-close').click();
-                        $("#date").change();
-                        clearInputs();
-                    },
-                    error: function (response) {
-                        var errorMessage = reponse.status + ': ' + response.statusText
-                        alert('Error - ' + errorMessage);
-                    }
-                })
+                button.attr("disabled", true);
+                $.ajax(
+                    {
+                        url: baseAdress + '/Entries',
+                        type: 'POST',
+                        data: entry,
+                        contentType: 'application/json',
+                        success: function () {
+                            $('.btn-close').click();
+                            $("#date").change();
+                            clearInputs();
+                            button.attr("disabled", false);
+                        },
+                        error: function (response) {
+                            var errorMessage = reponse.status + ': ' + response.statusText
+                            alert('Error - ' + errorMessage);
+                            button.attr("disabled", false);
+                        }
+                    })
 
             }
+
 
         });
     })

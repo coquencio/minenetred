@@ -41,6 +41,7 @@ namespace Minenetred.Web.Services.Implementations
             var redmineId = _context.Users.SingleOrDefault(u => u.UserName == user).RedmineId;
             var response = await _timeEntryService.GetTimeEntriesAsync(key, redmineId, projectId, date, date);
             var shapedList = _mapper.Map<List<TimeEntry>, List<Models.TimeEntryDto>>(response);
+
             float totalHours = 0;
             foreach (var entry in shapedList)
             {

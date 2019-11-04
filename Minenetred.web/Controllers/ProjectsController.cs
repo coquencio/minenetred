@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Minenetred.Web.Models;
 using Minenetred.Web.Services;
+using Minenetred.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Minenetred.Web.Controllers
 {
@@ -16,16 +17,19 @@ namespace Minenetred.Web.Controllers
         private readonly IProjectService _projectService;
         private readonly IUsersManagementService _userManagementService;
         private readonly ITimeEntryService _timeEntryService;
+        private readonly IPopulateSelectorService _populateSelectorService;
 
         public ProjectsController(
             IProjectService service,
             IUsersManagementService userManagementService,
-            ITimeEntryService timeEntryService
+            ITimeEntryService timeEntryService,
+            IPopulateSelectorService populateSelectorService
             )
         {
             _projectService = service;
             _userManagementService = userManagementService;
             _timeEntryService = timeEntryService;
+            _populateSelectorService = populateSelectorService;
         }
 
         [Route("/")]
@@ -43,6 +47,21 @@ namespace Minenetred.Web.Controllers
 
                 var decryptedKey = _userManagementService.GetUserKey(userName);
                 var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
+                var activityDictionary = new Dictionary<int, List<ActivityDto>>();
+                var issueDictionary = new Dictionary<int, List<IssueDto>>();
+
+                foreach (var project in projectList)
+                {
+                    var activitiesToAdd = await _populateSelectorService.GetActivitiesInListAsync(project.Id, userName);
+                    var issuesToAdd = await _populateSelectorService.GetIssuesInListAsync(project.Id, userName);
+
+                    activityDictionary.Add(project.Id, activitiesToAdd);
+                    issueDictionary.Add(project.Id, issuesToAdd);
+                }
+                ViewBag.lastAct = activityDictionary.Last();
+                ViewBag.lastIss = issueDictionary.Last();
+                ViewBag.activities = activityDictionary;
+                ViewBag.issues = issueDictionary;
                 ViewBag.Warnings = await _timeEntryService.GetUnloggedDaysAsync(_userManagementService.GetRedmineId(userName: userName), decryptedKey, DateTime.Today);
                 return View(projectList);
             }

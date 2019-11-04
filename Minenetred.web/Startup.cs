@@ -73,8 +73,8 @@ namespace Minenetred.Web
             services.AddScoped<Services.ITimeEntryService, Services.Implementations.TimeEntryService>();
             services.AddScoped<Services.IIssueService, Services.Implementations.IssueService>();
             services.AddScoped<Services.IActivityService, Services.Implementations.ActivityService>();
-
-            #endregion Project services
+            services.AddScoped<IPopulateSelectorService, PopulateSelectorService>();
+            #endregion
 
             var mappingConfig = new MapperConfiguration(mc =>
            {
@@ -89,10 +89,7 @@ namespace Minenetred.Web
 
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Description = "Swagger core API" });
-            });
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "My API", Description = "Swagger core API" }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

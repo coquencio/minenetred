@@ -38,7 +38,6 @@ namespace Minenetred.Web.Test
             _context = new MinenetredContext(options);
             _mapper = mappingConfig.CreateMapper();
             _projectService = new Mock<IProjectService>();
-
             _timeEntryService = new TimeEntryService(
                 _context,
                 _timeEntryLibraryService.Object,
@@ -200,5 +199,6 @@ namespace Minenetred.Web.Test
                 }
             }
         }
+
     }
 }

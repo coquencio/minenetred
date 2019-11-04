@@ -28,7 +28,6 @@ namespace Redmine.Library.Services.Implementations
         {
             if (string.IsNullOrEmpty(authKey))
                 throw new ArgumentNullException(nameof(authKey));
-
             var toReturn = "";
             var requestUri = _uriHelper.HandleTimeEntriesUri(authKey, userId, projectId, fromDate, toDate);
             HttpResponseMessage response = await _client.GetAsync(requestUri);
