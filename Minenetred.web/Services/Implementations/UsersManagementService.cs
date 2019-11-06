@@ -1,4 +1,5 @@
-﻿using Minenetred.Web.Context;
+﻿using Microsoft.Extensions.Logging;
+using Minenetred.Web.Context;
 using Minenetred.Web.Context.ContextModels;
 using Minenetred.Web.Infrastructure;
 using Redmine.Library.Services;
@@ -13,16 +14,19 @@ namespace Minenetred.Web.Services.Implementations
         private readonly MinenetredContext _context;
         private readonly IEncryptionService _encryptionService;
         private readonly IUserService _userService;
+        private readonly ILogger<IUsersManagementService> _logger;
 
         public UsersManagementService(
             MinenetredContext context,
             IEncryptionService encryptionService,
-            IUserService userService
+            IUserService userService,
+            ILogger<IUsersManagementService>logger
             )
         {
             _context = context;
             _encryptionService = encryptionService;
             _userService = userService;
+            _logger = logger;
         }
 
         public bool IsUserRegistered(string userEmail)
@@ -43,6 +47,7 @@ namespace Minenetred.Web.Services.Implementations
             };
             _context.Users.Add(newUser);
             _context.SaveChanges();
+            _logger.LogInformation("Registered user:" + userEmail);
         }
 
         public bool HasRedmineKey(string userEmail)
@@ -61,6 +66,7 @@ namespace Minenetred.Web.Services.Implementations
             user.RedmineKey = encryptedKey;
             _context.Users.Update(user);
             _context.SaveChanges();
+            _logger.LogInformation("Updated redmine Key");
         }
 
         public string GetUserKey(string userEmail)

@@ -4,6 +4,7 @@ using Redmine.Library.Core;
 using Redmine.Library.Models;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -40,8 +41,16 @@ namespace Redmine.Library.Services.Implementations
             }
             else
             {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception(errorMessage);
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException("Invalid access key");
+                }
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new HttpRequestException("Not found");
+                }
+                var errormsg = await response.Content.ReadAsStringAsync();
+                throw new Exception(errormsg);
             }
         }
     }

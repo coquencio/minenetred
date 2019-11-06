@@ -42,6 +42,13 @@ namespace Redmine.Library.Services.Implementations
             else
             {
                 var errormsg = await response.Content.ReadAsStringAsync();
+                if(response.StatusCode == HttpStatusCode.Unauthorized){
+                    throw new UnauthorizedAccessException("Invalid access key");
+                }
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new HttpRequestException("Not found");
+                }
                 throw new Exception(errormsg);
             }
         }

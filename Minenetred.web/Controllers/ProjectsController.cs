@@ -5,8 +5,10 @@ using Minenetred.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Minenetred.Web.Controllers
 {
@@ -18,18 +20,21 @@ namespace Minenetred.Web.Controllers
         private readonly IUsersManagementService _userManagementService;
         private readonly ITimeEntryService _timeEntryService;
         private readonly IPopulateSelectorService _populateSelectorService;
+        private readonly ILogger<ProjectsController> _logger;
 
         public ProjectsController(
             IProjectService service,
             IUsersManagementService userManagementService,
             ITimeEntryService timeEntryService,
-            IPopulateSelectorService populateSelectorService
+            IPopulateSelectorService populateSelectorService,
+            ILogger<ProjectsController>  logger
             )
         {
             _projectService = service;
             _userManagementService = userManagementService;
             _timeEntryService = timeEntryService;
             _populateSelectorService = populateSelectorService;
+            _logger = logger;
         }
 
         [Route("/")]
@@ -65,10 +70,21 @@ namespace Minenetred.Web.Controllers
                 ViewBag.Warnings = await _timeEntryService.GetUnloggedDaysAsync(_userManagementService.GetRedmineId(userName: userName), decryptedKey, DateTime.Today);
                 return View(projectList);
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException ex)
             {
+                _logger.LogError(ex , "Invalid key");
                 return RedirectToAction("AddKey", new { msj = "Add a valid key" });
             }
+            catch(HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Bad request");
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex ,"Unhandled exception");
+            }
+            return BadRequest();
         }
 
         [Route("/AccessKey")]
@@ -99,16 +115,29 @@ namespace Minenetred.Web.Controllers
             try
             {
                 if (string.IsNullOrEmpty(Redminekey))
+                {
+                    _logger.LogError(new ArgumentNullException("Key is null or empty"), "Invalid key");
                     return RedirectToAction("AddKey");
-
+                }
                 _userManagementService.UpdateKey(Redminekey, UserPrincipal.Current.EmailAddress);
                 await _userManagementService.AddRedmineIdAsync(Redminekey, UserPrincipal.Current.EmailAddress);
                 return RedirectToAction("GetProjectsAsync");
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException ex)
             {
+                _logger.LogError(ex, "Invalid key");
                 return RedirectToAction("AddKey", new { msj = "Add a valid key" });
             }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Bad request");
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Unhandled exception");
+            }
+            return BadRequest();
         }
     }
 }

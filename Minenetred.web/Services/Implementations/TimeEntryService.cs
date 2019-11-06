@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Minenetred.Web.Context;
 using Minenetred.Web.Models;
 using Newtonsoft.Json.Linq;
@@ -19,13 +20,15 @@ namespace Minenetred.Web.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IUsersManagementService _usersManagementService;
         private readonly IProjectService _projectService;
+        private readonly ILogger<TimeEntryService> _logger;
 
         public TimeEntryService(
             MinenetredContext context,
             Redmine.Library.Services.ITimeEntryService timeEntryService,
             IMapper mapper,
             IUsersManagementService usersManagementService,
-            IProjectService projectService
+            IProjectService projectService,
+            ILogger<TimeEntryService> logger
             )
         {
             _context = context;
@@ -33,6 +36,7 @@ namespace Minenetred.Web.Services.Implementations
             _mapper = mapper;
             _usersManagementService = usersManagementService;
             _projectService = projectService;
+            _logger = logger;
         }
 
         public async Task<float> GetTimeEntryHoursPerDay(int projectId, string date, string user)
@@ -59,7 +63,12 @@ namespace Minenetred.Web.Services.Implementations
             int activityId = Convert.ToInt32(jsonObject["activityId"]);
             string comments = jsonObject["comments"].ToString();
             var key = _usersManagementService.GetUserKey(UserPrincipal.Current.EmailAddress);
-            return await _timeEntryService.AddTimeEntryAsync(key, issueId, spentOn, hours, activityId, comments);
+            var toReturn = await _timeEntryService.AddTimeEntryAsync(key, issueId, spentOn, hours, activityId, comments);
+            if (toReturn == HttpStatusCode.OK)
+            {
+                _logger.LogInformation("Added new time entry");
+            }
+            return toReturn;
         }
 
         private async Task<List<DateTime>> GetFutureTimeEntriesDates(DateTime today, string apiKey, DateTime lastPeriodDate)

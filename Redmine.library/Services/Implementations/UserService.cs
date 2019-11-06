@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Redmine.Library.Core;
 using Redmine.Library.Models;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -35,8 +36,16 @@ namespace Redmine.Library.Services.Implementations
             }
             else
             {
-                var errorMsj = await response.Content.ReadAsStringAsync();
-                throw new Exception(errorMsj);
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException("Invalid access key");
+                }
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new HttpRequestException("Not found");
+                }
+                var errormsg = await response.Content.ReadAsStringAsync();
+                throw new Exception(errormsg);
             }
         }
     }

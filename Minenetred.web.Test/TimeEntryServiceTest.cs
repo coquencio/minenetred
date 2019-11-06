@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Minenetred.Web.Context;
 using Minenetred.Web.Context.ContextModels;
 using Minenetred.Web.Infrastructure;
@@ -23,7 +24,7 @@ namespace Minenetred.Web.Test
         private MinenetredContext _context;
         private Mock<IUsersManagementService> _userManagementService;
         private Mock<IProjectService> _projectService;
-
+        private Mock<ILogger<TimeEntryService>> _logger;
         public TimeEntryServiceTest()
         {
             var mappingConfig = new MapperConfiguration(mc =>
@@ -38,12 +39,14 @@ namespace Minenetred.Web.Test
             _context = new MinenetredContext(options);
             _mapper = mappingConfig.CreateMapper();
             _projectService = new Mock<IProjectService>();
+            _logger = new Mock<ILogger<TimeEntryService>>();
             _timeEntryService = new TimeEntryService(
                 _context,
                 _timeEntryLibraryService.Object,
                 _mapper,
                 _userManagementService.Object,
-                _projectService.Object
+                _projectService.Object,
+                _logger.Object
                 );
         }
 
