@@ -14,19 +14,22 @@ namespace Minenetred.Web.Services.Implementations
         private readonly MinenetredContext _context;
         private readonly IEncryptionService _encryptionService;
         private readonly IUserService _userService;
+        private readonly IConnectionService _connectionService;
         private readonly ILogger<IUsersManagementService> _logger;
 
         public UsersManagementService(
             MinenetredContext context,
             IEncryptionService encryptionService,
             IUserService userService,
-            ILogger<IUsersManagementService>logger
+            ILogger<IUsersManagementService>logger,
+            IConnectionService connectionService
             )
         {
             _context = context;
             _encryptionService = encryptionService;
             _userService = userService;
             _logger = logger;
+            _connectionService = connectionService;
         }
 
         public bool IsUserRegistered(string userEmail)
@@ -52,7 +55,7 @@ namespace Minenetred.Web.Services.Implementations
 
         public bool HasRedmineKey(string userEmail)
         {
-            if (_context.Users.SingleOrDefault(u => u.UserName == userEmail).RedmineKey == null)
+            if (string.IsNullOrEmpty(_context.Users.SingleOrDefault(u => u.UserName == userEmail).RedmineKey))
                 return false;
 
             return true;
@@ -67,6 +70,33 @@ namespace Minenetred.Web.Services.Implementations
             _context.Users.Update(user);
             _context.SaveChanges();
             _logger.LogInformation("Updated redmine Key");
+        }
+
+        public void updateBaseAddress(string address, string email)
+        {
+            if (!Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                throw new Exception("Invalid Uri");
+            }
+            var user = _context.Users.SingleOrDefault(u => u.UserName == email);
+            user.BaseUri = address;
+            _context.Users.Update(user);
+            _context.SaveChanges();
+            _connectionService.UpdateBaseAddress(address);
+            _logger.LogInformation("Updated base address");
+        }
+        public async Task<bool> IsValidBaseAddressAsync()
+        {
+            var response = await _connectionService.CheckBaseAddressAsync();
+            if (response == System.Net.HttpStatusCode.OK)
+                return true;
+
+            _logger.LogError("Invalid address");
+            return false;
+        }
+        public void SetGlobalAddress(string email)
+        {
+            _connectionService.UpdateBaseAddress(_context.Users.SingleOrDefault(c=>c.UserName==email).BaseUri);
         }
 
         public string GetUserKey(string userEmail)
@@ -98,6 +128,21 @@ namespace Minenetred.Web.Services.Implementations
                 return _context.Users.SingleOrDefault(u => u.RedmineKey== encryptedKey).RedmineId;
             }
             return 0;
+        }
+        public bool HasRedmineAddress(string emailAddress)
+        {
+            if (string.IsNullOrEmpty(_context.Users.SingleOrDefault(c=>c.UserName == emailAddress).BaseUri))
+                return false;
+
+            return true;
+        }
+
+        public async Task<string> GetBaseAddresAsync(string email)
+        {
+            if (HasRedmineAddress(email) && await IsValidBaseAddressAsync())
+                return _context.Users.SingleOrDefault(c => c.UserName == email).BaseUri;
+
+            return null;
         }
     }
 }

@@ -16,6 +16,10 @@ namespace Redmine.Library.Services.Implementations
         public UserService(HttpClient client)
         {
             _client = client;
+            if (ClientSettings.BaseAddress != null)
+            {
+                _client.BaseAddress = new Uri(ClientSettings.BaseAddress);
+            }
         }
 
         public async Task<UserServiceModel> GetCurrentUserAsync(string authKey)

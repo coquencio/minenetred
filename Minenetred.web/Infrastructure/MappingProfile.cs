@@ -14,7 +14,7 @@ namespace Minenetred.Web.Infrastructure
 
             CreateMap<Issue, IssueDto>();
 
-            CreateMap<TimeEntry, Minenetred.Web.Models.TimeEntryDto>();
+            CreateMap<TimeEntry, TimeEntryDto>();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.Net;
 using System.Net.Http;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Minenetred.Web.Models;
 using Minenetred.Web.Services;
 using Newtonsoft.Json.Linq;
 
@@ -22,17 +24,17 @@ namespace Minenetred.Web.Api
             _timeEntryService = timeEntryService;
             _logger = logger; 
         }
-        [Route("/Entries/{projectId}/{date}")]
+        [Route("/Entries/Hours/{projectId}")]
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         [ProducesResponseType(201)]
         [HttpGet]
-        public async Task<ActionResult<float>> GetTimeSpentPerDate([FromRoute] int projectId, [FromRoute]  string date)
+        public async Task<ActionResult<float>> GetTimeSpentPerDate([FromRoute] int projectId, string date)
         {
             try
             {
-                var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, date, UserPrincipal.Current.EmailAddress);
+                var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, UserPrincipal.Current.EmailAddress, date);
                 return Ok(toReturn);
             }
             catch (UnauthorizedAccessException ex)
@@ -58,6 +60,29 @@ namespace Minenetred.Web.Api
                 return HttpStatusCode.BadRequest;
             }
             return await _timeEntryService.AddTimeEntryAsync(entry);
+        }
+        [Route("/Entries/{projectId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(201)]
+        [HttpGet]
+        public async Task<ActionResult<List<TimeEntryDto>>> GetTimeSpentPerDate([FromRoute] int projectId, string fromDate = null, string toDate = null)
+        {
+            try
+            {
+                var toReturn = await _timeEntryService.GetTimeEntriesAsync(UserPrincipal.Current.EmailAddress, projectId, fromDate, toDate);
+                return Ok(toReturn);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Invalid access key");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Bad Request");
+            }
+            return BadRequest();
         }
     }
 }

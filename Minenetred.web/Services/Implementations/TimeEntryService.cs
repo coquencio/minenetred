@@ -21,6 +21,7 @@ namespace Minenetred.Web.Services.Implementations
         private readonly IUsersManagementService _usersManagementService;
         private readonly IProjectService _projectService;
         private readonly ILogger<TimeEntryService> _logger;
+        private object await_timeEntryService;
 
         public TimeEntryService(
             MinenetredContext context,
@@ -39,7 +40,7 @@ namespace Minenetred.Web.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<float> GetTimeEntryHoursPerDay(int projectId, string date, string user)
+        public async Task<float> GetTimeEntryHoursPerDay(int projectId, string user, string date = null)
         {
             var key = _usersManagementService.GetUserKey(user);
             var redmineId = _context.Users.SingleOrDefault(u => u.UserName == user).RedmineId;
@@ -161,6 +162,18 @@ namespace Minenetred.Web.Services.Implementations
                     if (hoursPerDay < 8)
                         toReturn.Add(dateToValidate.ToString("yyyy-MM-dd"), 0);
                 }
+            }
+            return toReturn;
+        }
+        public async Task<List<TimeEntryDto>> GetTimeEntriesAsync(string userName, int projectId = 0, string fromDate = null, string toDate = null)
+        {
+            var authKey = _usersManagementService.GetUserKey(userName);
+            int userId = _usersManagementService.GetRedmineId(userName: userName);
+            var responseList = await _timeEntryService.GetTimeEntriesAsync(authKey, userId, projectId, fromDate, toDate);
+            var toReturn = new List<TimeEntryDto>();
+            foreach (var TimeEntry in responseList)
+            {
+                toReturn.Add(_mapper.Map<TimeEntryDto>(TimeEntry));
             }
             return toReturn;
         }

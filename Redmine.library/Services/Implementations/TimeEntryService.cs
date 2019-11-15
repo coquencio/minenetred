@@ -22,6 +22,10 @@ namespace Redmine.Library.Services.Implementations
             _client = client;
             _uriHelper = uriHelper;
             _serializerHelper = serializerHelper;
+            if (ClientSettings.BaseAddress != null)
+            {
+                _client.BaseAddress = new Uri(ClientSettings.BaseAddress);
+            }
         }
 
         public async Task<List<TimeEntry>> GetTimeEntriesAsync(string authKey, int userId, int projectId = 0, string fromDate = null, string toDate = null)

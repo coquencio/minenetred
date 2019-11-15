@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Update user settings";
+}
+<hr />
+<h2>Update user settings</h2>
+
+<div class="container">
+
+    <form asp-controller="ApiKey" asp-action="UpdateBaseAddressAsync" method="post">
+        @{
+            if (!string.IsNullOrEmpty(ViewBag.msj))
+            {
+                <h3 style="color:red">@ViewBag.msj</h3>
+            }
+        }
+        <h4>Add or update the base address</h4>
+        <div class="form-group">
+            <label>@ViewBag.user</label>
+            <input type="text" class="form-control" id="Address" name="Address" placeholder="Add a base address" value=@ViewBag.Address>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Add/Modify base address</button>
+        </div>
+    </form>
+    @if (ViewBag.Address != null)
+    {
+        <form asp-controller="ApiKey" asp-action="UpdateRedmineKeyAsync" method="post">
+            <h4>Add or update api key</h4>
+            <div class="form-group">
+                <input type="text" class="form-control" id="Redminekey" name="Redminekey" placeholder="Enter your api key" value=@ViewBag.key>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add/Modify api key</button>
+            </div>
+        </form>
+    }
+
+</div>

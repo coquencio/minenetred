@@ -19,6 +19,10 @@ namespace Redmine.Library.Services.Implementations
         public ActivityService(HttpClient client, IUriHelper uriHelper, ISerializerHelper serializerHelper)
         {
             _client = client;
+            if (ClientSettings.BaseAddress != null)
+            {
+                _client.BaseAddress = new Uri(ClientSettings.BaseAddress);
+            }
             _uriHelper = uriHelper;
             _serializerHelper = serializerHelper;
         }

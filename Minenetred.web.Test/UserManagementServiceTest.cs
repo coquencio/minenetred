@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Minenetred.Web.Context;
 using Minenetred.Web.Infrastructure;
 using Minenetred.Web.Services.Implementations;
@@ -16,6 +17,8 @@ namespace Minenetred.Web.Test
         private EncryptionService _encryptionService;
         private UsersManagementService _usersManagementService;
         private Mock<IUserService> _userService;
+        private Mock<ILogger<UsersManagementService>> _logger;
+        private Mock<IConnectionService> _connectionService;
 
         public UserManagementServiceTest()
         {
@@ -24,10 +27,14 @@ namespace Minenetred.Web.Test
             _context = new MinenetredContext(options);
             _encryptionService = new EncryptionService("DefaultTest");
             _userService = new Mock<IUserService>();
+            _logger = new Mock<ILogger<UsersManagementService>>();
+            _connectionService = new Mock<IConnectionService>();
             _usersManagementService = new UsersManagementService(
                 _context,
                 _encryptionService,
-                _userService.Object
+                _userService.Object,
+                _logger.Object,
+                _connectionService.Object
                 );
         }
 

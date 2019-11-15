@@ -19,6 +19,7 @@ using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.DirectoryServices.AccountManagement;
 using System.Net.Http;
 
 namespace Minenetred.Web
@@ -34,7 +35,6 @@ namespace Minenetred.Web
                   autoCreateSqlTable: true,
                   restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
                   )
-              //.WriteTo.File("Errors.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
               .CreateLogger();
 
             Configuration = configuration;
@@ -62,22 +62,24 @@ namespace Minenetred.Web
             services.AddSingleton<ISerializerHelper, SerializerHelper>();
 
             services.AddScoped<Redmine.Library.Services.IIssueService, Redmine.Library.Services.Implementations.IssueService>();
-            services.AddHttpClient<Redmine.Library.Services.IIssueService, Redmine.Library.Services.Implementations.IssueService>("issueClient", c=> c.BaseAddress = _uri);
+            services.AddHttpClient<Redmine.Library.Services.IIssueService, Redmine.Library.Services.Implementations.IssueService>("issueClient");
 
             services.AddScoped<Redmine.Library.Services.ITimeEntryService, Redmine.Library.Services.Implementations.TimeEntryService>();
-            services.AddHttpClient<Redmine.Library.Services.ITimeEntryService, Redmine.Library.Services.Implementations.TimeEntryService>("timeEntryClient", c => c.BaseAddress = _uri);
+            services.AddHttpClient<Redmine.Library.Services.ITimeEntryService, Redmine.Library.Services.Implementations.TimeEntryService>("timeEntryClient");
 
             services.AddScoped<IUserService, UserService>();
             services.AddHttpClient<IUserService, UserService>("userClient", c => c.BaseAddress = _uri);
 
             services.AddScoped<Redmine.Library.Services.IActivityService, Redmine.Library.Services.Implementations.ActivityService>();
-            services.AddHttpClient<Redmine.Library.Services.IActivityService, Redmine.Library.Services.Implementations.ActivityService>("activityClient", c => c.BaseAddress = _uri);
+            services.AddHttpClient<Redmine.Library.Services.IActivityService, Redmine.Library.Services.Implementations.ActivityService>("activityClient");
 
             services.AddScoped<Redmine.Library.Services.IProjectService, Redmine.Library.Services.Implementations.ProjectService>();
-            services.AddHttpClient<Redmine.Library.Services.IProjectService, Redmine.Library.Services.Implementations.ProjectService>("projectClient", c => c.BaseAddress = _uri);
+            services.AddHttpClient<Redmine.Library.Services.IProjectService, Redmine.Library.Services.Implementations.ProjectService>("projectClient");
+
+            services.AddScoped<IConnectionService, ConnectionService>();
+            services.AddHttpClient<IConnectionService, ConnectionService>("connectionClient");
 
             services.AddScoped<IEncryptionService>(s => new EncryptionService(_secretEncrytionKey));
-
             #endregion Library Services
 
             #region Project services
@@ -128,7 +130,7 @@ namespace Minenetred.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}"
+                    template: "{controller=Projects}/{action=GetProjectsAsync}"
                     );
             });
             app.UseSwagger();
@@ -136,6 +138,18 @@ namespace Minenetred.Web
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
+            var serviceScope = app.ApplicationServices.CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<MinenetredContext>();
+            var userName = UserPrincipal.Current.EmailAddress;
+            var user = context.Users.SingleOrDefaultAsync(c=>c.UserName == userName);
+            if (user.Result != null)
+            {
+                if (!string.IsNullOrEmpty(user.Result.BaseUri))
+                {
+                    ClientSettings.BaseAddress = user.Result.BaseUri;
+                }
+            }
         }
     }
 }

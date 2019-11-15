@@ -37,7 +37,6 @@ namespace Minenetred.Web.Controllers
             _logger = logger;
         }
 
-        [Route("/")]
         [HttpGet]
         public async Task<ActionResult<List<ProjectDto>>> GetProjectsAsync()
         {
@@ -47,8 +46,11 @@ namespace Minenetred.Web.Controllers
                 if (!_userManagementService.IsUserRegistered(userName))
                     _userManagementService.RegisterUser(userName);
 
+                if (!_userManagementService.HasRedmineAddress(userName))
+                    return RedirectToAction("KeySettingsAsync", "ApiKey", new { msj = "Missing base address" });
+
                 if (!_userManagementService.HasRedmineKey(userName))
-                    return RedirectToAction("AddKey");
+                    return RedirectToAction("KeySettingsAsync", "ApiKey", new { msj = "Missing redmine key" });
 
                 var decryptedKey = _userManagementService.GetUserKey(userName);
                 var projectList = await _projectService.GetOpenProjectsAsync(decryptedKey);
@@ -73,7 +75,7 @@ namespace Minenetred.Web.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogError(ex , "Invalid key");
-                return RedirectToAction("AddKey", new { msj = "Add a valid key" });
+                return RedirectToAction("KeySettingsAsync", "ApiKey", new { msj = "Add a valid key" });
             }
             catch(HttpRequestException ex)
             {
@@ -83,59 +85,6 @@ namespace Minenetred.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogCritical(ex ,"Unhandled exception");
-            }
-            return BadRequest();
-        }
-
-        [Route("/AccessKey")]
-        public IActionResult AddKey(string msj = null)
-        {
-            var userName = UserPrincipal.Current.EmailAddress;
-            ViewBag.user = userName;
-            if (!string.IsNullOrWhiteSpace(msj))
-            {
-                ViewBag.msj = msj;
-            }
-            var userKey = _userManagementService.GetUserKey(userName);
-            if (userKey == null)
-            {
-                ViewBag.key = null;
-            }
-            else
-            {
-                var denryptionKey = _userManagementService.GetUserKey(UserPrincipal.Current.EmailAddress);
-                ViewBag.key = denryptionKey;
-            }
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateRedmineKeyAsync(string Redminekey)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(Redminekey))
-                {
-                    _logger.LogError(new ArgumentNullException("Key is null or empty"), "Invalid key");
-                    return RedirectToAction("AddKey");
-                }
-                _userManagementService.UpdateKey(Redminekey, UserPrincipal.Current.EmailAddress);
-                await _userManagementService.AddRedmineIdAsync(Redminekey, UserPrincipal.Current.EmailAddress);
-                return RedirectToAction("GetProjectsAsync");
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogError(ex, "Invalid key");
-                return RedirectToAction("AddKey", new { msj = "Add a valid key" });
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Bad request");
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Unhandled exception");
             }
             return BadRequest();
         }

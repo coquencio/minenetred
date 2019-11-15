@@ -17,5 +17,6 @@ namespace Minenetred.Web.Context.ContextModels
 
         public DateTime LastKeyUpdatedDate { get; set; }
         public int RedmineId { get; set; }
+        public string BaseUri { get; set; }
     }
 }

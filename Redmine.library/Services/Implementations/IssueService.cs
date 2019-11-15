@@ -19,6 +19,10 @@ namespace Redmine.Library.Services.Implementations
         {
             _client = client;
             _uriHelper = uriHelper;
+            if (ClientSettings.BaseAddress != null)
+            {
+                _client.BaseAddress = new Uri(ClientSettings.BaseAddress);
+            }
         }
 
         public async Task<List<Issue>> GetIssuesAsync(string authKey, int assignedToId, int projectId)

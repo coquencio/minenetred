@@ -147,7 +147,7 @@
                     $(this).find('text').text('Loading...');
                     $('.hours-a-day').find('h3').text('Loading...');
                     $.ajax({
-                        url: baseAdress + '/Entries/' + projectId + '/' + date,
+                        url: baseAdress + '/Entries/Hours/' + projectId + '?date=' + date,
                         dataType: 'json',
                         success: function (result) {
                             var actualIndex = indexColumn + 1;
