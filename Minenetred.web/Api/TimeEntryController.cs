@@ -18,12 +18,14 @@ namespace Minenetred.Web.Api
     {
         private readonly ITimeEntryService _timeEntryService;
         private readonly ILogger<TimeEntryController> _logger;
-        public TimeEntryController(ITimeEntryService timeEntryService, 
+
+        public TimeEntryController(ITimeEntryService timeEntryService,
             ILogger<TimeEntryController> logger)
         {
             _timeEntryService = timeEntryService;
-            _logger = logger; 
+            _logger = logger;
         }
+
         [Route("/Entries/Hours/{projectId}")]
         [Produces("application/json")]
         [ProducesResponseType(404)]
@@ -34,7 +36,7 @@ namespace Minenetred.Web.Api
         {
             try
             {
-                var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, UserPrincipal.Current.EmailAddress, date);
+                var toReturn = await _timeEntryService.GetTimeEntryHoursPerDay(projectId, UserPrincipal.Current.EmailAddress, date).ConfigureAwait(false);
                 return Ok(toReturn);
             }
             catch (UnauthorizedAccessException ex)
@@ -59,8 +61,9 @@ namespace Minenetred.Web.Api
                 _logger.LogError(new ArgumentNullException(),"Time entry empty");
                 return HttpStatusCode.BadRequest;
             }
-            return await _timeEntryService.AddTimeEntryAsync(entry);
+            return await _timeEntryService.AddTimeEntryAsync(entry).ConfigureAwait(false);
         }
+
         [Route("/Entries/{projectId}")]
         [Produces("application/json")]
         [ProducesResponseType(404)]
@@ -71,7 +74,7 @@ namespace Minenetred.Web.Api
         {
             try
             {
-                var toReturn = await _timeEntryService.GetTimeEntriesAsync(UserPrincipal.Current.EmailAddress, projectId, fromDate, toDate);
+                var toReturn = await _timeEntryService.GetTimeEntriesAsync(UserPrincipal.Current.EmailAddress, projectId, fromDate, toDate).ConfigureAwait(false);
                 return Ok(toReturn);
             }
             catch (UnauthorizedAccessException ex)

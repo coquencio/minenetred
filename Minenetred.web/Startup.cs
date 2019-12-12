@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,7 @@ namespace Minenetred.Web
                   configuration.GetConnectionString("DefaultConnection"),
                   "LogEvents",
                   autoCreateSqlTable: true,
-                  restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+                  restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning
                   )
               .CreateLogger();
 
@@ -103,8 +104,20 @@ namespace Minenetred.Web
             services.AddDbContext<MinenetredContext>(
                 o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+                builder => builder
+                   .WithOrigins("*")
+                   .AllowAnyMethod()
+                   .AllowCredentials()
+                   .AllowAnyHeader()));
+
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("CorsPolicy"));
+            });
+
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "My API", Description = "Swagger core API" }));
         }
 
@@ -125,6 +138,7 @@ namespace Minenetred.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseCors();
             app.UseAuthentication();
             app.UseMvc(routes =>
             {

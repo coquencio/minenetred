@@ -1,0 +1,10 @@
+<nav class='navbar navbar-expand navbar-light bg-light'>
+    <ul class='nav nav-pills'>
+        <a class='Title'>{{pageTitle}}</a>
+        <li><a class='nav-link' routerLinkActive='active' [routerLink]="['/settings']">User settings</a></li>
+        <li><a class='nav-link' routerLinkActive='active' [routerLink]="['/weeklyView']">Weekly view</a></li>
+    </ul>
+</nav>
+<div class='container'>
+    <router-outlet></router-outlet>
+</div>

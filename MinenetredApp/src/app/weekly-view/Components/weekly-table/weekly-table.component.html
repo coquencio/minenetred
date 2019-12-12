@@ -1,0 +1,20 @@
+<table class='table'>
+    <thead>
+        <tr>
+            <th style="width: 20%;" scope="col">Projects:</th>
+            <th *ngFor="let day of tableHeaders">{{day}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let element of projectList">
+            <td>{{element.name}}</td>
+            <td *ngFor="let hours of element.hoursPerday" class="td">
+                {{hours}} logged hours<br><br><button class="button-green" >Add time entry</button>
+            </td>            
+        </tr>
+        <tr>
+            <td>Total hours:</td>
+            <td *ngFor = "let hours of hoursCounter">{{hours}} hours in the day</td>
+        </tr>
+    </tbody>
+</table>
