@@ -61,10 +61,13 @@ namespace Minenetred.Web.Api
             {
                 _logger.LogError(ex, "Missing data");
             }
-            catch (Exception)
+            catch (InvalidCastException ex)
             {
-
-                throw;
+                _logger.LogError(ex, "Invalid base address");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Unhandled exception");
             }
             return BadRequest();
         }
