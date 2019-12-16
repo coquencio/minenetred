@@ -144,8 +144,9 @@ namespace Minenetred.Web.Services.Implementations
 
             return null;
         }
-        public async Task<bool> IsApiKeyValidAsync(string apiKey)
+        public async Task<bool> IsApiKeyValidAsync(string userEmail)
         {
+            var apiKey = _context.Users.SingleOrDefault(u => u.UserName == userEmail).RedmineKey;
             return await _connectionService.IsApiKeyValid(apiKey);
         }
     }

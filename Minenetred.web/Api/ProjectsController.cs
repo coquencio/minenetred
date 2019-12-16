@@ -54,8 +54,16 @@ namespace Minenetred.Web.Api
                 {
                     throw new ArgumentNullException("Api key", "Missing api key");
                 }
+                if (!await _usersManagementService.IsApiKeyValidAsync(userEmail))
+                {
+                    throw new FormatException("Invalid api key");
+                }
                 var redmineKey = _usersManagementService.GetUserKey(userEmail);
                 return Ok(await _projectService.GetOpenProjectsAsync(redmineKey).ConfigureAwait(false));
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(ex, "Invalid api key");
             }
             catch (ArgumentNullException ex)
             {

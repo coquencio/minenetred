@@ -22,6 +22,6 @@ namespace Minenetred.Web.Services
         int GetRedmineId(string redmineKey = null, string userName = null);
         bool HasRedmineAddress(string emailAddress);
         Task<string> GetBaseAddresAsync(string email);
-        Task<bool> IsApiKeyValidAsync(string apiKey);
+        Task<bool> IsApiKeyValidAsync(string userEmail);
     }
 }
