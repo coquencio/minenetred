@@ -144,5 +144,9 @@ namespace Minenetred.Web.Services.Implementations
 
             return null;
         }
+        public async Task<bool> IsApiKeyValidAsync(string apiKey)
+        {
+            return await _connectionService.IsApiKeyValid(apiKey);
+        }
     }
 }
