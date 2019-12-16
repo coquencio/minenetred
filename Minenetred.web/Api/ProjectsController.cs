@@ -40,6 +40,7 @@ namespace Minenetred.Web.Api
         [HttpGet]
         public async Task<IActionResult> GetOpenProjectsAsync()
         {
+            string message="";
             try
             {
                 var userEmail = UserPrincipal.Current.EmailAddress;
@@ -63,21 +64,24 @@ namespace Minenetred.Web.Api
             }
             catch (FormatException ex)
             {
-                _logger.LogError(ex, "Invalid api key");
+                message = "Invalid api key";
+                _logger.LogError(ex, message);
             }
             catch (ArgumentNullException ex)
             {
-                _logger.LogError(ex, "Missing data");
+                message = "Missing data";
+                _logger.LogError(ex, message);
             }
             catch (InvalidCastException ex)
             {
-                _logger.LogError(ex, "Invalid base address");
+                message = "Invalid base address";
+                _logger.LogError(ex, message);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
-            return BadRequest();
+            return BadRequest(message);
         }
     }
 }
