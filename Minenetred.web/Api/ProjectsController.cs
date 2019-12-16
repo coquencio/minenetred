@@ -51,7 +51,7 @@ namespace Minenetred.Web.Api
                 if(!await _usersManagementService.IsValidBaseAddressAsync()){
                     throw new InvalidCastException("Invalid base address");
                 }
-                if (_usersManagementService.HasRedmineKey(userEmail))
+                if (!_usersManagementService.HasRedmineKey(userEmail))
                 {
                     throw new ArgumentNullException("Api key", "Missing api key");
                 }
