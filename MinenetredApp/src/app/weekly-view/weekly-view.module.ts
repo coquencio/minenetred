@@ -7,6 +7,8 @@ import { WeeklyTableComponent } from './Components/weekly-table/weekly-table.com
 import { DatePickerComponent} from './Components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
 import {RouterModule} from '@angular/router';
+import { StoreModule } from '@ngrx/store';
+import { reducer } from './state/weekly-view.reducer';
 
 
 
@@ -24,8 +26,10 @@ import {RouterModule} from '@angular/router';
     RouterModule.forRoot([
       {path:'weeklyView', component:WeeklyViewComponent},
       {path:'settings',component: UserSettingsComponent },
-      {path: '', redirectTo:'SpentTime', pathMatch:'full'}
-    ])
+      {path: '', redirectTo:'weeklyView', pathMatch:'full'},
+      {path: '**', redirectTo:'weeklyView', pathMatch:'full'}
+    ]),
+    StoreModule.forFeature('weeklyView', reducer),
   ],
   exports:[
     NavigationComponent

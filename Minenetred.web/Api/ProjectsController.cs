@@ -46,14 +46,16 @@ namespace Minenetred.Web.Api
                 var userEmail = UserPrincipal.Current.EmailAddress;
                 if (!_usersManagementService.HasRedmineAddress(userEmail))
                 {
-                    throw new ArgumentNullException("Base address", "Missing base address");
+                    message = "Missing base address";
+                    throw new ArgumentNullException("Base address", message);
                 }
                 if(!await _usersManagementService.IsValidBaseAddressAsync()){
                     throw new InvalidCastException("Invalid base address");
                 }
                 if (!_usersManagementService.HasRedmineKey(userEmail))
                 {
-                    throw new ArgumentNullException("Api key", "Missing api key");
+                    message = "Missing api key";
+                    throw new ArgumentNullException("Api key", message);
                 }
                 if (!await _usersManagementService.IsApiKeyValidAsync(userEmail))
                 {
@@ -61,7 +63,7 @@ namespace Minenetred.Web.Api
                 }
                 var redmineKey = _usersManagementService.GetUserKey(userEmail);
                 return Ok(await _projectService.GetOpenProjectsAsync(redmineKey).ConfigureAwait(false));
-            }
+            } 
             catch (FormatException ex)
             {
                 message = "Invalid api key";
@@ -69,7 +71,6 @@ namespace Minenetred.Web.Api
             }
             catch (ArgumentNullException ex)
             {
-                message = "Missing data";
                 _logger.LogError(ex, message);
             }
             catch (InvalidCastException ex)

@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WeeklyViewModule } from './weekly-view/weekly-view.module';
+import {StoreModule} from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { WeeklyViewModule } from './weekly-view/weekly-view.module';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    WeeklyViewModule
+    WeeklyViewModule,
+    StoreModule.forRoot({})
   ],
   providers: [],
   bootstrap: [AppComponent]

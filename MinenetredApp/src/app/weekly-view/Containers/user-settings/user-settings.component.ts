@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 
 @Component({
   selector: 'app-user-settings',
@@ -7,9 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserSettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private store : Store<any>)
+  { }
 
+  message : string;
   ngOnInit() {
+    this.store.pipe(select('weeklyView')).subscribe(
+      w => {
+        if(w){
+          this.message = w.WarningMessage;
+        }
+      }
+    );
   }
 
 }

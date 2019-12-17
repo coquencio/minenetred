@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ɵclearResolutionOfComponentResourcesQueue, ɵConsole } from '@angular/core';
 import { IProject } from './../../../Interfaces/ProjectInterface';
 import {TimeEntrtyService} from '../../../Services/TimeEntryService/time-entrty.service';
 import { formatDate, formatPercent } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-weekly-table',
@@ -12,12 +13,12 @@ export class WeeklyTableComponent implements OnInit {
 
   constructor(private timeEntryService : TimeEntrtyService) { }
 
-  @Input() projectList: IProject[];
+  @Input() projectList: HttpResponse<IProject[]>;
   @Input() tableHeaders: Array<string>;
 
   hoursCounter : Array<number>;
-
-  ngOnInit() {
+  ngOnInit(){
+    
   }
   ngOnChanges(){
     if(this.tableHeaders){
@@ -25,7 +26,8 @@ export class WeeklyTableComponent implements OnInit {
     }
   }
   private AddHoursToProjects(){
-    this.projectList.forEach((project, projectIndex) => {
+    console.log(this.projectList.status);
+    this.projectList.body.forEach((project, projectIndex) => {
       project.hoursPerday = new Array<number>();
       this.tableHeaders.forEach((element, index) => {
         const startingIndex = element.length - 10;
@@ -36,7 +38,7 @@ export class WeeklyTableComponent implements OnInit {
           },
           null,
           ()=>{
-            if(projectIndex === this.projectList.length-1 && project.hoursPerday.length === this.tableHeaders.length){
+            if(projectIndex === this.projectList.body.length-1 && project.hoursPerday.length === this.tableHeaders.length){
               this.GetHoursPerDay();
             }
           }
@@ -46,7 +48,7 @@ export class WeeklyTableComponent implements OnInit {
   }
   private GetHoursPerDay(){
     this.hoursCounter = new Array<number>(0,0,0,0,0);
-    this.projectList.forEach((project) =>{
+    this.projectList.body.forEach((project) =>{
       project.hoursPerday.forEach((element, index) =>{
         this.hoursCounter[index] = this.hoursCounter[index] + element;
       });

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IProject } from './../../Interfaces/ProjectInterface';
 
@@ -11,8 +11,8 @@ export class ProjectsService {
   constructor(private httpClient: HttpClient)
   { }
 
-  GetOpenProjects() : Observable<IProject[]>{
-    return this.httpClient.get<IProject[]>(
+  GetOpenProjects() : Observable<HttpResponse<IProject[]>>{
+    return this.httpClient.get<HttpResponse<IProject[]>>(
       'https://localhost:44323/api/Projects',
       { withCredentials: true });
   }
