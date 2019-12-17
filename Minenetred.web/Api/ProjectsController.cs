@@ -50,7 +50,8 @@ namespace Minenetred.Web.Api
                     throw new ArgumentNullException("Base address", message);
                 }
                 if(!await _usersManagementService.IsValidBaseAddressAsync()){
-                    throw new InvalidCastException("Invalid base address");
+                    message = "Invalid base address";
+                    throw new InvalidCastException(message);
                 }
                 if (!_usersManagementService.HasRedmineKey(userEmail))
                 {
@@ -59,14 +60,14 @@ namespace Minenetred.Web.Api
                 }
                 if (!await _usersManagementService.IsApiKeyValidAsync(userEmail))
                 {
-                    throw new FormatException("Invalid api key");
+                    message = "Invalid api key";
+                    throw new FormatException(message);
                 }
                 var redmineKey = _usersManagementService.GetUserKey(userEmail);
                 return Ok(await _projectService.GetOpenProjectsAsync(redmineKey).ConfigureAwait(false));
             } 
             catch (FormatException ex)
             {
-                message = "Invalid api key";
                 _logger.LogError(ex, message);
             }
             catch (ArgumentNullException ex)
@@ -75,7 +76,6 @@ namespace Minenetred.Web.Api
             }
             catch (InvalidCastException ex)
             {
-                message = "Invalid base address";
                 _logger.LogError(ex, message);
             }
             catch (Exception ex)
