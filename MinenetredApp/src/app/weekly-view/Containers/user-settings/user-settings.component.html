@@ -10,7 +10,7 @@
         <button type="submit" (click)="AddBaseAddress()" class="btn btn-primary">Add/Modify base address</button>
     </div>
 </form>
-<form>
+<form *ngIf = "IsValidAddress">
         <h4>Add or update api key</h4>
         <div class="form-group">
             <input type="text" [(ngModel)]="apiKey" class="form-control" id="Redminekey" name="Redminekey" placeholder="Enter your api key">

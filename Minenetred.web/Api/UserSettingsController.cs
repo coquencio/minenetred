@@ -102,5 +102,39 @@ namespace Minenetred.Web.Api
             }
             return BadRequest(message);
         }
+        [Route("settings/baseAddress")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        [HttpGet]
+        public async Task<IActionResult> GetBaseAddressAsync()
+        {
+            var email = UserPrincipal.Current.EmailAddress;
+            var address = await _usersManagementService.GetBaseAddresAsync(email);
+            if (string.IsNullOrEmpty(address))
+            {
+                return NotFound();
+            }
+            return Ok(new { address = address });
+        }
+        [Route("settings/key")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        [HttpGet]
+        public async Task<IActionResult> GetRedmineKeyAsync()
+        {
+            var email = UserPrincipal.Current.EmailAddress;
+            var address = await _usersManagementService.GetBaseAddresAsync(email);
+            if (string.IsNullOrEmpty(address))
+            {
+                return BadRequest();
+            }
+            var Key = _usersManagementService.GetUserKey(email);
+            if (string.IsNullOrEmpty(Key))
+            {
+                return NotFound();
+            }
+            return Ok( new { key = Key });
+        }
     }
 }

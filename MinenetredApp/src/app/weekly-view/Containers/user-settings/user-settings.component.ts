@@ -14,13 +14,17 @@ export class UserSettingsComponent implements OnInit {
     private store : Store<any>,
     private userService : UserSettingsService)
   { }
+
   infoMessage : string;
   errorMessage : string;
   baseAddress : string;
   apiKey : string;
+  IsValidAddress : boolean;
+
   ngOnInit() {
     this.infoMessage = '';
     this.errorMessage = '';
+    this.IsValidAddress = false;
     this.store.pipe(select('weeklyView')).subscribe(
       w => {
         if(w){
@@ -28,8 +32,27 @@ export class UserSettingsComponent implements OnInit {
         }
       }
     );
+    this.GetBaseAddress();
   }
-
+  private GetBaseAddress(){
+    this.userService.getBaseAddress().subscribe(
+      r => {
+            this.baseAddress = r.address;
+            this.IsValidAddress = true;
+            this.GetApiKey();
+          },
+      () => {
+        this.IsValidAddress = false;
+        this.baseAddress = '';
+      }
+    );
+  }
+  private GetApiKey(){
+    console.log("simon");
+    this.userService.getApiKey().subscribe(
+      r=>{this.apiKey = r.key},
+    );
+  }
   AddBaseAddress(){
     if(this.baseAddress == ''){
       this.errorMessage = 'Add a valid address';
@@ -39,13 +62,15 @@ export class UserSettingsComponent implements OnInit {
       this.errorMessage = 'Address must not contain blank spaces';
       return;
     }
-    this.userService.updateBaseAddress(this.baseAddress).subscribe(
-      r => {
-              this.infoMessage = r;
-              this.errorMessage = '';
-            },
-      error => {this.errorMessage = error.error}
-    );
+    this.userService.updateBaseAddress(this.baseAddress).subscribe(r => {
+      this.infoMessage = r;
+      this.errorMessage = '';
+      this.IsValidAddress = true;
+    }, error => {
+      console.log(error);
+      this.errorMessage = error.error,
+        this.baseAddress = '';
+    });
   }
 
   AddApiKey(){
