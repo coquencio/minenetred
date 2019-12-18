@@ -48,7 +48,6 @@ export class UserSettingsComponent implements OnInit {
     );
   }
   private GetApiKey(){
-    console.log("simon");
     this.userService.getApiKey().subscribe(
       r=>{this.apiKey = r.key},
     );
@@ -70,6 +69,7 @@ export class UserSettingsComponent implements OnInit {
       console.log(error);
       this.errorMessage = error.error,
         this.baseAddress = '';
+        this.infoMessage = '';
     });
   }
 
@@ -87,7 +87,10 @@ export class UserSettingsComponent implements OnInit {
         this.infoMessage = r;
         this.errorMessage = '';
       },
-      error => {this.errorMessage = error.error}
+      error => {
+        this.errorMessage = error.error;
+        this.infoMessage = '';
+      }
     );
   }
 

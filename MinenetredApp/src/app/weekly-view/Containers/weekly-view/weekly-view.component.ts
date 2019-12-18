@@ -17,7 +17,7 @@ export class WeeklyViewComponent implements OnInit {
     private router : Router,
     private store : Store<any>
     ) { }
-  response : HttpResponse<IProject[]>;
+  response : IProject[];
   formatedDates : Array<string>;
   dates : Array<Date>;
 

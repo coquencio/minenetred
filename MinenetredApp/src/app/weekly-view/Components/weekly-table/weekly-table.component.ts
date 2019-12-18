@@ -13,7 +13,7 @@ export class WeeklyTableComponent implements OnInit {
 
   constructor(private timeEntryService : TimeEntrtyService) { }
 
-  @Input() projectList: HttpResponse<IProject[]>;
+  @Input() projectList: IProject[];
   @Input() tableHeaders: Array<string>;
 
   hoursCounter : Array<number>;
