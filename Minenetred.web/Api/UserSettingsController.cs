@@ -69,33 +69,38 @@ namespace Minenetred.Web.Api
         [HttpPost]
         public async Task<IActionResult> UpdateRedmineKeyAsync([FromRoute] string Redminekey)
         {
+            string message = "";
             try
             {
                 if (string.IsNullOrEmpty(Redminekey))
                 {
+                    message = "Missing key";
                     throw new ArgumentNullException((nameof(Redminekey)));
                 }
                 _usersManagementService.UpdateKey(Redminekey, UserPrincipal.Current.EmailAddress);
                 await _usersManagementService.AddRedmineIdAsync(Redminekey, UserPrincipal.Current.EmailAddress);
-                return Ok();
+                message = "Redmine key successfully updated";
+                return Ok(message);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Missing key");
+                _logger.LogError(ex, message);
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.LogError(ex, "Invalid key");
+                message = "Invalid key";
+                _logger.LogError(ex, message);
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Bad request");
+                message = "Bad request";
+                _logger.LogError(ex, message);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
-            return BadRequest();
+            return BadRequest(message);
         }
     }
 }

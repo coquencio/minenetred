@@ -40,8 +40,8 @@ export class UserSettingsComponent implements OnInit {
       return;
     }
     this.userService.updateBaseAddress(this.baseAddress).subscribe(
-      () => {
-              this.infoMessage = 'Base address updated';
+      r => {
+              this.infoMessage = r;
               this.errorMessage = '';
             },
       error => {this.errorMessage = error.error}
@@ -58,8 +58,8 @@ export class UserSettingsComponent implements OnInit {
       return;
     }
     this.userService.updateRedmineKey(this.apiKey).subscribe(
-      ()=>{
-        this.infoMessage = 'Key updated';
+      r=>{
+        this.infoMessage = r;
         this.errorMessage = '';
       },
       error => {this.errorMessage = error.error}
