@@ -18,7 +18,7 @@ export class WeeklyTableComponent implements OnInit {
 
   hoursCounter : Array<number>;
   ngOnInit(){
-    
+
   }
   ngOnChanges(){
     if(this.tableHeaders){
@@ -26,8 +26,7 @@ export class WeeklyTableComponent implements OnInit {
     }
   }
   private AddHoursToProjects(){
-    console.log(this.projectList.status);
-    this.projectList.body.forEach((project, projectIndex) => {
+    this.projectList.forEach((project, projectIndex) => {
       project.hoursPerday = new Array<number>();
       this.tableHeaders.forEach((element, index) => {
         const startingIndex = element.length - 10;
@@ -38,7 +37,7 @@ export class WeeklyTableComponent implements OnInit {
           },
           null,
           ()=>{
-            if(projectIndex === this.projectList.body.length-1 && project.hoursPerday.length === this.tableHeaders.length){
+            if(projectIndex === this.projectList.length-1 && project.hoursPerday.length === this.tableHeaders.length){
               this.GetHoursPerDay();
             }
           }
@@ -48,7 +47,7 @@ export class WeeklyTableComponent implements OnInit {
   }
   private GetHoursPerDay(){
     this.hoursCounter = new Array<number>(0,0,0,0,0);
-    this.projectList.body.forEach((project) =>{
+    this.projectList.forEach((project) =>{
       project.hoursPerday.forEach((element, index) =>{
         this.hoursCounter[index] = this.hoursCounter[index] + element;
       });
