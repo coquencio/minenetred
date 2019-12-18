@@ -14,37 +14,8 @@ $font-stack:    Helvetica, sans-serif;
     font: 100% $font-stack;
     font-size: large;
 }
-.text-input{
-    width: 100%;
-    font: 100% $font-stack;
-    font-size: medium;
-    text-align: center;
-    padding: 10px 20px;
-}
 .center {
     margin: auto;
     width: 50%;
     padding: 10px;
 }
-.button {
-    padding: 3px 10px;
-    border-radius: 3px;
-    border: 1px solid #e1e4e8;
-    font: 100% $font-stack;
-  }
-@mixin button-var($backGround) {
-    @extend .button;
-    background-color: $backGround;
-    &:hover {
-        background-color: darken($color: $backGround, $amount: 10%);
-        transition: all 0.3s ease;
-      }
-      &:active {
-        background-color: darken($color: $backGround, $amount: 20%);
-    }
-}
-.button-blue{
-    @include button-var(blue);
-    //@include centerer();
-    color:  white;
-  }

@@ -53,7 +53,7 @@ export class UserSettingsComponent implements OnInit {
     );
   }
   AddBaseAddress(){
-    if(this.baseAddress == ''){
+    if(this.baseAddress === ''){
       this.errorMessage = 'Add a valid address';
       return;
     }
@@ -74,7 +74,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   AddApiKey(){
-    if(this.apiKey == ''){
+    if(this.apiKey === ''){
       this.errorMessage = 'Add a valid key';
       return;
     }
