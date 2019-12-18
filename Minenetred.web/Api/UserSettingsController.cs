@@ -42,9 +42,8 @@ namespace Minenetred.Web.Api
                 _usersManagementService.updateBaseAddress(address, UserPrincipal.Current.EmailAddress);
                 if (!await _usersManagementService.IsValidBaseAddressAsync())
                 {
-                    message = "Invalid base address";
                     _usersManagementService.updateBaseAddress("", UserPrincipal.Current.EmailAddress);
-                    throw new InvalidCastException(message);
+                    throw new InvalidCastException("Invalid base address");
                 }
                 message = "Base address successfully updated";
                 return Ok(message);
@@ -55,6 +54,7 @@ namespace Minenetred.Web.Api
             }
             catch (InvalidCastException ex)
             {
+                message = "Invalid base address";
                 _logger.LogError(ex, message);
             }
             catch (Exception ex)
