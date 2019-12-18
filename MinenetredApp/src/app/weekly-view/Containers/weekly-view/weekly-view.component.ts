@@ -26,6 +26,10 @@ export class WeeklyViewComponent implements OnInit {
     this.projectService.GetOpenProjects().subscribe(
       r => {
         this.response = r;
+        this.store.dispatch({
+          type : 'SET_WARNING_MESSAGE',
+          payload: ''
+        });
       },
       r => {
         this.store.dispatch({

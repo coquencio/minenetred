@@ -1,19 +1,21 @@
-<p>{{message}}</p>
+<p>{{errorMessage}}</p>
+<p>{{infoMessage}}</p>
+
 <form>
     <h4>Add or update base addres</h4>
     <div class="form-group">
-        <input type="text" class="form-control" id="baseAddress" name="baseAddress" placeholder="Enter your base address">
+        <input type="text" [(ngModel)]="baseAddress" class="form-control" id="baseAddress" name="baseAddress" placeholder="Enter your base address">
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Add/Modify base address</button>
+        <button type="submit" (click)="AddBaseAddress()" class="btn btn-primary">Add/Modify base address</button>
     </div>
 </form>
 <form>
         <h4>Add or update api key</h4>
         <div class="form-group">
-            <input type="text" class="form-control" id="Redminekey" name="Redminekey" placeholder="Enter your api key">
+            <input type="text" [(ngModel)]="apiKey" class="form-control" id="Redminekey" name="Redminekey" placeholder="Enter your api key">
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Add/Modify api key</button>
+            <button type="submit" (click)="AddApiKey()" class="btn btn-primary">Add/Modify api key</button>
         </div>
 </form>
