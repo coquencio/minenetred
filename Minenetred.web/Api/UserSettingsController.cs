@@ -31,33 +31,37 @@ namespace Minenetred.Web.Api
         [HttpPost]
         public async Task<IActionResult> UpdateBaseAddressAsync(string address)
         {
+            string message = "";
             try
             {
                 if (string.IsNullOrEmpty(address))
                 {
+                    message = "Missing address";
                     throw new ArgumentNullException(nameof(address));
                 }
                 _usersManagementService.updateBaseAddress(address, UserPrincipal.Current.EmailAddress);
                 if (!await _usersManagementService.IsValidBaseAddressAsync())
                 {
+                    message = "Invalid base address";
                     _usersManagementService.updateBaseAddress("", UserPrincipal.Current.EmailAddress);
-                    throw new InvalidCastException("Invalid base address");
+                    throw new InvalidCastException(message);
                 }
-                return Ok();
+                message = "Base address successfully updated";
+                return Ok(message);
             }
             catch (ArgumentNullException ex)
             {
-                _logger.LogError(ex, "Missing data");
+                _logger.LogError(ex, message);
             }
-            catch (InvalidCastException)
+            catch (InvalidCastException ex)
             {
-                _logger.LogError(new InvalidCastException("Invalid base address"), "Invalid Base address");
+                _logger.LogError(ex, message);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
-            return BadRequest();
+            return BadRequest(message);
         }
         [Route("settings/key/{Redminekey}")]
         [ProducesResponseType(400)]
