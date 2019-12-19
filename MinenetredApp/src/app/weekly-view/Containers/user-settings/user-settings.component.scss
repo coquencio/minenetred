@@ -4,11 +4,17 @@ $font-stack:    Helvetica, sans-serif;
     font: 100% $font-stack;
     color: green;
     font-size: x-large;
+    margin: auto;
+    width: 50%;
+    padding: 10px;
 }
 .warning-message{
     font: 100% $font-stack;
     font-size: large;
     color: red;
+    margin: auto;
+    width: 50%;
+    padding: 10px;
 }
 .title{
     font: 100% $font-stack;
@@ -32,8 +38,19 @@ $font-stack:    Helvetica, sans-serif;
     border-radius: 5px;
     border: 1px solid #ccc;
     margin: 0.5rem 0;
+    color: gray;
     &:focus{
         border-color: #66afe9;
     }
-    
+}
+.button{
+    background-color: #337ab7;
+    color: white;
+    font: 100% $font-stack;
+    border: 1px solid;
+    border-radius: 5px;
+    height: 35px;
+    &:hover{
+        background-color: #2e6da4;
+    }
 }

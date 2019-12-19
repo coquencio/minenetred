@@ -79,7 +79,7 @@ export class UserSettingsComponent implements OnInit {
       return;
     }
     if(this.apiKey.includes(' ')){
-      this.errorMessage = 'Address must not contain blank spaces';
+      this.errorMessage = 'Key must not contain blank spaces';
       return;
     }
     this.userService.updateRedmineKey(this.apiKey).subscribe(
