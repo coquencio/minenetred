@@ -4,7 +4,7 @@ import {  ProjectsService } from './../../../Services/ProjectsService/projects.s
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
-import * as fromWeeklyView from '../../state/weekly-view.reducer'; 
+import * as fromWeeklyView from '../../state/weekly-view.reducer';
 
 @Component({
   selector: 'app-weekly-view',
@@ -26,7 +26,7 @@ export class WeeklyViewComponent implements OnInit {
   ngOnInit() {
     this.projectService.GetOpenProjects().subscribe(
       r => {
-        this.response = r; 
+        this.response = r;
         this.store.dispatch({
           type : 'SET_WARNING_MESSAGE',
           payload: ''
