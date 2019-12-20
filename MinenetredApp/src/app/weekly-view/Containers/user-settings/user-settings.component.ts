@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { UserSettingsService } from '../../../Services/UserSettings/user-settings.service';
-import { HttpResponse } from '@angular/common/http';
+import * as fromWeeklyView from './../../state/weekly-view.reducer';
 
 @Component({
   selector: 'app-user-settings',
@@ -11,7 +11,7 @@ import { HttpResponse } from '@angular/common/http';
 export class UserSettingsComponent implements OnInit {
 
   constructor(
-    private store : Store<any>,
+    private store : Store<fromWeeklyView.State>,
     private userService : UserSettingsService)
   { }
 
@@ -25,7 +25,7 @@ export class UserSettingsComponent implements OnInit {
     this.infoMessage = '';
     this.errorMessage = '';
     this.IsValidAddress = false;
-    this.store.pipe(select('weeklyView')).subscribe(
+    this.store.pipe(select('WeeklyView')).subscribe(
       w => {
         if(w){
           this.errorMessage = w.WarningMessage;

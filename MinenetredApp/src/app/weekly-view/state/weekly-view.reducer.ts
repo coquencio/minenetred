@@ -6,7 +6,11 @@ export interface WeeklyViewState{
     WarningMessage : string;
 }
 
-export function reducer(state : WeeklyViewState, action) : WeeklyViewState {
+const initialState : WeeklyViewState = {
+    WarningMessage : '',
+}
+
+export function reducer(state = initialState, action) : WeeklyViewState {
     switch (action.type){
         case 'SET_WARNING_MESSAGE' :
         return{
