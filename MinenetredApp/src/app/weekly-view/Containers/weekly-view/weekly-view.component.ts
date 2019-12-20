@@ -31,7 +31,6 @@ export class WeeklyViewComponent implements OnInit {
         this.store.dispatch(new weeklyViewActions.SetWarningMessage(''));
       },
       r => {
-        
         this.store.dispatch(new weeklyViewActions.SetWarningMessage(r.error));
         this.router.navigate(['/settings']);
       }

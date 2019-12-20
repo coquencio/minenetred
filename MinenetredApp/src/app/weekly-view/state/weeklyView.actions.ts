@@ -10,4 +10,4 @@ export class SetWarningMessage implements Action{
 }
 
 export type WeeklyViewActions = SetWarningMessage;
-//Union type needed if more actions will be added "| exampleActionClass" 
+// Union type needed if more actions will be added "| exampleActionClass"
