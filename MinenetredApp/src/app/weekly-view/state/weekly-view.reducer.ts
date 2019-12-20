@@ -1,8 +1,9 @@
 import * as fromRoot  from '../../Core/app.state';
 import {WeeklyViewActionTypes, WeeklyViewActions} from '../state/weeklyView.actions'
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+
 export interface State extends fromRoot.State{
-    WeeklyView: WeeklyViewState;
+    weeklyView: WeeklyViewState;
 }
 export interface WeeklyViewState{
     WarningMessage : string;
@@ -11,7 +12,7 @@ export interface WeeklyViewState{
 const initialState : WeeklyViewState = {
     WarningMessage : '',
 }
-const getWeeklyViewState = createFeatureSelector<WeeklyViewState>('WeeklyView');
+const getWeeklyViewState = createFeatureSelector<WeeklyViewState>('weeklyView');
 
 export const getWarningMessage = createSelector(
     getWeeklyViewState,
