@@ -25,10 +25,10 @@ export class UserSettingsComponent implements OnInit {
     this.infoMessage = '';
     this.errorMessage = '';
     this.IsValidAddress = false;
-    this.store.pipe(select('WeeklyView')).subscribe(
+    this.store.pipe(select(fromWeeklyView.getWarningMessage)).subscribe(
       w => {
         if(w){
-          this.errorMessage = w.WarningMessage;
+          this.errorMessage = w;
         }
       }
     );
