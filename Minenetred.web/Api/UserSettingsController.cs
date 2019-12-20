@@ -100,6 +100,7 @@ namespace Minenetred.Web.Api
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
+            _usersManagementService.UpdateKey("", UserPrincipal.Current.EmailAddress);
             return BadRequest(message);
         }
         [Route("settings/baseAddress")]

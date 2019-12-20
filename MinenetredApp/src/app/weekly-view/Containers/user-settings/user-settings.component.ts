@@ -90,6 +90,7 @@ export class UserSettingsComponent implements OnInit {
       error => {
         this.errorMessage = error.error;
         this.infoMessage = '';
+        this.apiKey = '';
       }
     );
   }
