@@ -1,4 +1,5 @@
 import * as fromRoot  from '../../Core/app.state';
+import {WeeklyViewActionTypes, WeeklyViewActions} from '../state/weeklyView.actions'
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 export interface State extends fromRoot.State{
     WeeklyView: WeeklyViewState;
@@ -17,9 +18,9 @@ export const getWarningMessage = createSelector(
      state => state.WarningMessage
      );
 
-export function reducer(state = initialState, action) : WeeklyViewState {
+export function reducer(state = initialState, action : WeeklyViewActions) : WeeklyViewState {
     switch (action.type){
-        case 'SET_WARNING_MESSAGE' :
+        case WeeklyViewActionTypes.SetWarningMessage :
         return{
             ...state,
             WarningMessage : action.payload

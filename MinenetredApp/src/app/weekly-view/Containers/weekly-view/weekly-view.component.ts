@@ -5,6 +5,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import * as fromWeeklyView from '../../state/weekly-view.reducer';
+import * as weeklyViewActions from '../../state/weeklyView.actions';
 
 @Component({
   selector: 'app-weekly-view',
@@ -27,16 +28,11 @@ export class WeeklyViewComponent implements OnInit {
     this.projectService.GetOpenProjects().subscribe(
       r => {
         this.response = r;
-        this.store.dispatch({
-          type : 'SET_WARNING_MESSAGE',
-          payload: ''
-        });
+        this.store.dispatch(new weeklyViewActions.SetWarningMessage(''));
       },
       r => {
-        this.store.dispatch({
-          type : 'SET_WARNING_MESSAGE',
-          payload: r.error
-        });
+        
+        this.store.dispatch(new weeklyViewActions.SetWarningMessage(r.error));
         this.router.navigate(['/settings']);
       }
     );

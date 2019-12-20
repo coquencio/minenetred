@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, ɵclearResolutionOfComponentResourcesQueue, ɵConsole } from '@angular/core';
 import { IProject } from './../../../Interfaces/ProjectInterface';
 import {TimeEntrtyService} from '../../../Services/TimeEntryService/time-entrty.service';
-import { formatDate, formatPercent } from '@angular/common';
-import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-weekly-table',
