@@ -15,13 +15,18 @@ export class WeeklyTableComponent implements OnInit {
   @Input() tableHeaders: Array<string>;
 
   hoursCounter : Array<number>;
+  IsModalDisplaying : boolean;
   ngOnInit(){
-
+    this.IsModalDisplaying = false;
   }
   ngOnChanges(){
     if(this.tableHeaders){
       this.AddHoursToProjects();
     }
+  }
+
+  DisplayModal(){
+    this.IsModalDisplaying = !this.IsModalDisplaying;
   }
   private AddHoursToProjects(){
     this.projectList.forEach((project, projectIndex) => {

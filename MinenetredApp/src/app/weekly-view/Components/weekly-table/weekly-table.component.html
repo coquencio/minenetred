@@ -1,3 +1,13 @@
+<!-- The Modal -->
+<div *ngIf = "IsModalDisplaying" id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span (click)="DisplayModal()" class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+  </div>
+
+</div>
 <table class='table'>
     <thead>
         <tr>
@@ -9,7 +19,7 @@
         <tr *ngFor="let element of projectList">
             <td>{{element.name}}</td>
             <td *ngFor="let hours of element.hoursPerday" class="td">
-                {{hours}} logged hours<br><br><button class="button-green" >Add time entry</button>
+                {{hours}} logged hours<br><br><button  (click)="DisplayModal()" class="button-green" >Add time entry</button>
             </td>            
         </tr>
         <tr>
