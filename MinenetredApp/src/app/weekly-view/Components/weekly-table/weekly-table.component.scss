@@ -286,3 +286,10 @@ table {
     text-decoration: none;
     cursor: pointer;
   }
+  .text{
+    font: 100% $font-stack;  
+  }
+  .title{
+    font: 100% $font-stack;
+    font-weight: bold;
+  }

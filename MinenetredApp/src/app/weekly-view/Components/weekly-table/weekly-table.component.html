@@ -3,8 +3,26 @@
 
   <!-- Modal content -->
   <div class="modal-content">
-    <span (click)="DisplayModal()" class="close">&times;</span>
-    <p>Some text in the Modal..</p>
+    <span (click)="HideModal()" class="close">&times;</span>
+    <h3 class="title">{{selectedProjectName}}</h3>
+    <form>
+        <input id="hours-input" [(ngModel)]="timeEntryToPost.hours" class="text" type="number" min="0" name="hours" placeholder="Enter hours" /><br />
+        <input id="comment-input" [(ngModel)]="timeEntryToPost.comments" class="text" type="text" name="description" placeholder="Enter description" /><br />
+        
+        <h5 class="title">Select Issue</h5>
+        <select *ngIf="issuesLoaded" class="text" [(ngModel)]="timeEntryToPost.issueId" name="issue" >
+            <option *ngFor="let issue of issueSelector" class="text" [value]="issue.id">{{issue.subject}}</option>
+        </select><br />
+
+        <h5 class="title">Select Activity</h5>
+        <select *ngIf="activitiesLoaded" [(ngModel)]="timeEntryToPost.activityId" class="text" name="activity">
+            <option *ngFor="let activity of activitySelector" class="text" [value]="activity.id">{{activity.name}}</option>
+        </select><br />
+
+        <input id="dateEntry" type="hidden" name="date" value="" />
+        <p class="title">Date:{{date}} </p><br />
+    </form>
+    <button (click)="AddTimeEntry()">Add time entry</button>
   </div>
 
 </div>
@@ -18,8 +36,8 @@
     <tbody>
         <tr *ngFor="let element of projectList">
             <td>{{element.name}}</td>
-            <td *ngFor="let hours of element.hoursPerday" class="td">
-                {{hours}} logged hours<br><br><button  (click)="DisplayModal()" class="button-green" >Add time entry</button>
+            <td *ngFor="let hours of element.hoursPerday; let i = index" class="td">
+                {{hours}} logged hours<br><br><button  (click)="DisplayModal(element, i)" class="button-green" >Add time entry</button>
             </td>            
         </tr>
         <tr>
