@@ -80,6 +80,7 @@ export class UserSettingsComponent implements OnInit {
       this.errorMessage = error.error,
         this.baseAddress = '';
         this.infoMessage = '';
+        this.IsValidAddress = false;
         this.isLoadingBaseAddress = false;
     });
   }
