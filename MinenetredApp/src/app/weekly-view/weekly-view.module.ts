@@ -9,8 +9,7 @@ import { FormsModule } from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 import { reducer } from './state/weekly-view.reducer';
-
-
+import { LoadingCircleComponent } from './Components/loading-circle/loading-circle.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,8 @@ import { reducer } from './state/weekly-view.reducer';
       WeeklyViewComponent,
       DatePickerComponent,
       NavigationComponent,
-      UserSettingsComponent
+      UserSettingsComponent,
+      LoadingCircleComponent
     ],
   imports: [
     CommonModule,

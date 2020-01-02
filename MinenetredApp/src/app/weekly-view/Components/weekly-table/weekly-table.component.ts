@@ -36,6 +36,7 @@ export class WeeklyTableComponent implements OnInit {
   activitiesLoaded : boolean;
   timeEntryToPost : ITimeEntry;
   date : string;
+  areHoursLoading : boolean;
 
   ngOnInit(){
     this.timeEntryToPost = {
@@ -45,6 +46,7 @@ export class WeeklyTableComponent implements OnInit {
       issueId : 0,
       spentOn : '',
     }
+    this.areHoursLoading = false;
     this.issuesLoaded = false;
     this.activitiesLoaded = false;
     this.IsModalDisplaying = false;
@@ -120,6 +122,7 @@ export class WeeklyTableComponent implements OnInit {
     );
   }
   private AddHoursToProjects(){
+    this.areHoursLoading = true;
     this.projectList.forEach((project, projectIndex) => {
       project.hoursPerday = new Array<number>();
       this.tableHeaders.forEach((element, index) => {
@@ -133,6 +136,7 @@ export class WeeklyTableComponent implements OnInit {
           ()=>{
             if(projectIndex === this.projectList.length-1 && project.hoursPerday.length === this.tableHeaders.length){
               this.GetHoursPerDay();
+              this.areHoursLoading = false;
             }
           }
         );

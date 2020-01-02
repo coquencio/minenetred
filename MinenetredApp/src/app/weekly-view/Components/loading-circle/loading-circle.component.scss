@@ -1,0 +1,49 @@
+body {
+    background: #1d1e1d;
+  }
+  
+  section {
+    width: 200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .spinner {
+    animation: rotate 1.4s linear infinite;
+    -webkit-animation: rotate 1.4s linear infinite;
+    -moz-animation: rotate 1.4s linear infinite;
+    width:174px;
+    height:174px;
+    position: relative;
+  }
+  
+  .spinner-dot {
+    width:274px;
+    height:274px;
+    position: relative;
+    top: 0;
+  }
+  
+  
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @-webkit-keyframes rotate {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  
+  @-moz-keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .path {
+    stroke-dasharray: 170;
+    stroke-dashoffset: 20;
+  }  
