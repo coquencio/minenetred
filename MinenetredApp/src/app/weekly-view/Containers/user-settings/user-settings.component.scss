@@ -1,9 +1,8 @@
 $font-stack:    Helvetica, sans-serif;
-
 .message{
     font: 100% $font-stack;
     color: green;
-    font-size: x-large;
+    font-size: large;
     margin: auto;
     width: 50%;
     padding: 10px;
@@ -19,6 +18,9 @@ $font-stack:    Helvetica, sans-serif;
 .title{
     font: 100% $font-stack;
     font-size: large;
+    margin: auto;
+    width: 50%;
+    padding: 10px;
 }
 .center {
     margin: auto;

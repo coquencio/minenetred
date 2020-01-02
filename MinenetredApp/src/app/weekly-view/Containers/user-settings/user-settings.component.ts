@@ -20,6 +20,8 @@ export class UserSettingsComponent implements OnInit {
   baseAddress : string;
   apiKey : string;
   IsValidAddress : boolean;
+  isLoadingBaseAddress : boolean;
+  isLoadingApiKey : boolean;
 
   ngOnInit() {
     this.infoMessage = '';
@@ -35,6 +37,7 @@ export class UserSettingsComponent implements OnInit {
     this.GetBaseAddress();
   }
   private GetBaseAddress(){
+    this.isLoadingBaseAddress = true;
     this.userService.getBaseAddress().subscribe(
       r => {
             this.baseAddress = r.address;
@@ -44,12 +47,17 @@ export class UserSettingsComponent implements OnInit {
       () => {
         this.IsValidAddress = false;
         this.baseAddress = '';
-      }
+        this.isLoadingBaseAddress = false;
+      },
+      ()=> this.isLoadingBaseAddress = false
     );
   }
   private GetApiKey(){
+    this.isLoadingApiKey = true;
     this.userService.getApiKey().subscribe(
       r=>{this.apiKey = r.key},
+      ()=>this.isLoadingApiKey=false,
+      ()=>this.isLoadingApiKey = false
     );
   }
   AddBaseAddress(){
@@ -61,15 +69,18 @@ export class UserSettingsComponent implements OnInit {
       this.errorMessage = 'Address must not contain blank spaces';
       return;
     }
+    this.isLoadingBaseAddress=true;
     this.userService.updateBaseAddress(this.baseAddress).subscribe(r => {
       this.infoMessage = r;
       this.errorMessage = '';
       this.IsValidAddress = true;
+      this.isLoadingBaseAddress=false;
     }, error => {
       console.log(error);
       this.errorMessage = error.error,
         this.baseAddress = '';
         this.infoMessage = '';
+        this.isLoadingBaseAddress = false;
     });
   }
 
@@ -82,15 +93,18 @@ export class UserSettingsComponent implements OnInit {
       this.errorMessage = 'Key must not contain blank spaces';
       return;
     }
+    this.isLoadingApiKey = true;
     this.userService.updateRedmineKey(this.apiKey).subscribe(
       r=>{
         this.infoMessage = r;
         this.errorMessage = '';
+        this.isLoadingApiKey = false;
       },
       error => {
         this.errorMessage = error.error;
         this.infoMessage = '';
         this.apiKey = '';
+        this.isLoadingApiKey = false;
       }
     );
   }
