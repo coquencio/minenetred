@@ -9,7 +9,6 @@ import * as fromWeeklyView from '../../state/weekly-view.reducer';
 import * as weeklyViewActions from '../../state/weeklyView.actions';
 import { Store, select } from '@ngrx/store';
 import {ITimeEntry} from '../../../Interfaces/TimeEntryInterface';
-import { stringify } from 'querystring';
 
 @Component({
   selector: 'app-weekly-table',
