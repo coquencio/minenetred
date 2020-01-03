@@ -5,24 +5,25 @@
   <div class="modal-content">
     <span (click)="HideModal()" class="close">&times;</span>
     <h3 class="title">{{selectedProjectName}}</h3>
-    <form>
-        <input id="hours-input" [(ngModel)]="timeEntryToPost.hours" class="text" type="number" min="0" name="hours" placeholder="Enter hours" /><br />
-        <input id="comment-input" [(ngModel)]="timeEntryToPost.comments" class="text" type="text" name="description" placeholder="Enter description" /><br />
-        
+    <form *ngIf="issuesLoaded && activitiesLoaded; else loadingForm">
+        <h5 class="title">Enter hours</h5>
+        <input id="hours-input" [(ngModel)]="timeEntryToPost.hours" class="text" type="number" min="0" name="hours" placeholder="Enter hours" /><br><br>
+        <input id="comment-input" [(ngModel)]="timeEntryToPost.comments" class="text" type="text" name="description" placeholder="Enter description" />
         <h5 class="title">Select Issue</h5>
-        <select *ngIf="issuesLoaded" class="text" [(ngModel)]="timeEntryToPost.issueId" name="issue" >
+        <select class="text" [(ngModel)]="timeEntryToPost.issueId" name="issue" >
             <option *ngFor="let issue of issueSelector" class="text" [value]="issue.id">{{issue.subject}}</option>
         </select><br />
-
         <h5 class="title">Select Activity</h5>
-        <select *ngIf="activitiesLoaded" [(ngModel)]="timeEntryToPost.activityId" class="text" name="activity">
+        <select [(ngModel)]="timeEntryToPost.activityId" class="text" name="activity">
             <option *ngFor="let activity of activitySelector" class="text" [value]="activity.id">{{activity.name}}</option>
         </select><br />
-
         <input id="dateEntry" type="hidden" name="date" value="" />
         <p class="title">Date:{{date}} </p><br />
     </form>
-    <button (click)="AddTimeEntry()">Add time entry</button>
+    <ng-template #loadingForm>
+        <app-loading-circle></app-loading-circle>
+    </ng-template>
+    <button *ngIf="issuesLoaded && activitiesLoaded" (click)="AddTimeEntry()">Add time entry</button>
   </div>
 
 </div>
@@ -52,4 +53,3 @@
         </tbody>    
     </ng-template>
 </table>
-
