@@ -93,12 +93,12 @@ export class WeeklyTableComponent implements OnInit {
       window.alert('Please add a description');
       return;
     }
-    if(this.timeEntryToPost.activityId == 0){
-      window.alert('Select a valid activity');
-      return;
-    }
     if(this.timeEntryToPost.issueId == 0){
       window.alert('Select a valid issue');
+      return;
+    }
+    if(this.timeEntryToPost.activityId == 0){
+      window.alert('Select a valid activity');
       return;
     }
     this.timeEntryService.AddTimeEntry(this.timeEntryToPost).subscribe(

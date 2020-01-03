@@ -26,28 +26,30 @@
   </div>
 
 </div>
-<app-loading-circle *ngIf="areHoursLoading; else loadHours"></app-loading-circle>
-<ng-template #loadHours>
 <table class='table'>
     <thead>
-        <tr>
+        <tr *ngIf="!areHoursLoading">
             <th style="width: 20%;" scope="col">Projects:</th>
             <th *ngFor="let day of tableHeaders">{{day}}</th>
         </tr>
+        <tr *ngIf="areHoursLoading">
+            <th style="width: 20%;" scope="col">Projects:</th>
+        </tr>
     </thead>
-    <tbody *ngIf="projectList">
-        <tr *ngFor="let element of projectList">
-            <td>{{element.name}}</td>    
-            <td *ngFor="let hours of element.hoursPerday; let i = index" class="td">
-                {{hours}} logged hours<br><br><button  (click)="DisplayModal(element, i)" class="button-green" >Add time entry</button>
-            </td>        
-        </tr>
-        <tr>
-            <td>Total hours:</td>
-            <td *ngFor = "let hours of hoursCounter">{{hours}} hours in the day</td>
-        </tr>
-    </tbody>
-<app-loading-circle *ngIf="!projectList" ></app-loading-circle>
+    <app-loading-circle *ngIf="!projectList || areHoursLoading; else elseBlock"></app-loading-circle>
+    <ng-template #elseBlock>
+        <tbody>
+            <tr *ngFor="let element of projectList">
+                <td>{{element.name}}</td>    
+                <td *ngFor="let hours of element.hoursPerday; let i = index" class="td">
+                    {{hours}} logged hours<br><br><button  (click)="DisplayModal(element, i)" class="button-green" >Add time entry</button>
+                </td>        
+            </tr>
+            <tr>
+                <td>Total hours:</td>
+                <td *ngFor = "let hours of hoursCounter">{{hours}} hours in the day</td>
+            </tr>
+        </tbody>    
+    </ng-template>
 </table>
-</ng-template>
 
