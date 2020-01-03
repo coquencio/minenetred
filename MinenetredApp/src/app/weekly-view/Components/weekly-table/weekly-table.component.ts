@@ -113,7 +113,7 @@ export class WeeklyTableComponent implements OnInit {
       null,
       () => {this.issuesLoaded = true;}
     );
-  } 
+  }
   GetActivities(projectId : number){
     this.activityService.GetActivitiesPerProject(projectId).subscribe(
       r => this.activitySelector = r,
