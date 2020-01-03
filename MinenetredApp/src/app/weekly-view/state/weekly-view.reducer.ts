@@ -44,7 +44,7 @@ export function reducer(state = initialState, action : WeeklyViewActions) : Week
                 SelectedProjectName : action.payload
             };
         case WeeklyViewActionTypes.SetFormatedDate :
-            if(action.payload == '' || action.payload.length <= 10){
+            if(action.payload === '' || action.payload.length <= 10){
                 return{
                     ...state,
                     date : action.payload.substr(action.payload.length-10)

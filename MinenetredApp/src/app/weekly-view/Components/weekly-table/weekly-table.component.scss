@@ -251,7 +251,7 @@ table {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
   @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0} 
+    from {top:-300px; opacity:0}
     to {top:0; opacity:1}
   }
   
@@ -287,7 +287,7 @@ table {
     cursor: pointer;
   }
   .text{
-    font: 100% $font-stack;  
+    font: 100% $font-stack;
   }
   .title{
     font: 100% $font-stack;

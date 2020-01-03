@@ -63,7 +63,7 @@ export class WeeklyTableComponent implements OnInit {
     }
   }
   HideModal(){
-    //Clear all
+    // Clear all
     this.issuesLoaded = false;
     this.activitiesLoaded = false;
     this.IsModalDisplaying = false;
@@ -89,15 +89,15 @@ export class WeeklyTableComponent implements OnInit {
     this.timeEntryToPost.spentOn = this.date;
   }
   AddTimeEntry(){
-    if(this.timeEntryToPost.comments.trim() == ''){
+    if(this.timeEntryToPost.comments.trim() === ''){
       window.alert('Please add a description');
       return;
     }
-    if(this.timeEntryToPost.issueId == 0){
+    if(this.timeEntryToPost.issueId === 0){
       window.alert('Select a valid issue');
       return;
     }
-    if(this.timeEntryToPost.activityId == 0){
+    if(this.timeEntryToPost.activityId === 0){
       window.alert('Select a valid activity');
       return;
     }
@@ -113,7 +113,7 @@ export class WeeklyTableComponent implements OnInit {
       null,
       () => {this.issuesLoaded = true;}
     );
-  }  
+  } 
   GetActivities(projectId : number){
     this.activityService.GetActivitiesPerProject(projectId).subscribe(
       r => this.activitySelector = r,
