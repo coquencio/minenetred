@@ -11,17 +11,16 @@ import * as fromWeeklyView from './../../state/weekly-view.reducer';
 export class UserSettingsComponent implements OnInit {
 
   constructor(
-    private store : Store<fromWeeklyView.State>,
-    private userService : UserSettingsService)
-  { }
+    private store: Store<fromWeeklyView.State>,
+    private userService: UserSettingsService) { }
 
-  infoMessage : string;
-  errorMessage : string;
-  baseAddress : string;
-  apiKey : string;
-  IsValidAddress : boolean;
-  isLoadingBaseAddress : boolean;
-  isLoadingApiKey : boolean;
+  infoMessage: string;
+  errorMessage: string;
+  baseAddress: string;
+  apiKey: string;
+  IsValidAddress: boolean;
+  isLoadingBaseAddress: boolean;
+  isLoadingApiKey: boolean;
 
   ngOnInit() {
     this.infoMessage = '';
@@ -29,74 +28,75 @@ export class UserSettingsComponent implements OnInit {
     this.IsValidAddress = false;
     this.store.pipe(select(fromWeeklyView.getWarningMessage)).subscribe(
       w => {
-        if(w){
+        if (w) {
           this.errorMessage = w;
         }
       }
     );
     this.GetBaseAddress();
   }
-  private GetBaseAddress(){
+  private GetBaseAddress() {
     this.isLoadingBaseAddress = true;
     this.userService.getBaseAddress().subscribe(
       r => {
-            this.baseAddress = r.address;
-            this.IsValidAddress = true;
-            this.GetApiKey();
-          },
+        this.baseAddress = r.address;
+        this.IsValidAddress = true;
+        this.GetApiKey();
+      },
       () => {
         this.IsValidAddress = false;
         this.baseAddress = '';
         this.isLoadingBaseAddress = false;
       },
-      ()=> this.isLoadingBaseAddress = false
+      () => this.isLoadingBaseAddress = false
     );
   }
-  private GetApiKey(){
+  private GetApiKey() {
     this.isLoadingApiKey = true;
     this.userService.getApiKey().subscribe(
-      r=>{this.apiKey = r.key},
-      ()=>this.isLoadingApiKey=false,
-      ()=>this.isLoadingApiKey = false
+      r => { this.apiKey = r.key },
+      () => this.isLoadingApiKey = false,
+      () => this.isLoadingApiKey = false
+
     );
   }
-  AddBaseAddress(){
-    if(this.baseAddress === ''){
+  AddBaseAddress() {
+    if (this.baseAddress === '') {
       this.errorMessage = 'Add a valid address';
       return;
     }
-    if(this.baseAddress.includes(' ')){
+    if (this.baseAddress.includes(' ')) {
       this.errorMessage = 'Address must not contain blank spaces';
       return;
     }
-    this.isLoadingBaseAddress=true;
+    this.isLoadingBaseAddress = true;
     this.userService.updateBaseAddress(this.baseAddress).subscribe(r => {
       this.infoMessage = r;
       this.errorMessage = '';
       this.IsValidAddress = true;
-      this.isLoadingBaseAddress=false;
+      this.isLoadingBaseAddress = false;
     }, error => {
       console.log(error);
       this.errorMessage = error.error,
         this.baseAddress = '';
-        this.infoMessage = '';
-        this.IsValidAddress = false;
-        this.isLoadingBaseAddress = false;
+      this.infoMessage = '';
+      this.IsValidAddress = false;
+      this.isLoadingBaseAddress = false;
     });
   }
 
-  AddApiKey(){
-    if(this.apiKey === ''){
+  AddApiKey() {
+    if (this.apiKey === '') {
       this.errorMessage = 'Add a valid key';
       return;
     }
-    if(this.apiKey.includes(' ')){
+    if (this.apiKey.includes(' ')) {
       this.errorMessage = 'Key must not contain blank spaces';
       return;
     }
     this.isLoadingApiKey = true;
     this.userService.updateRedmineKey(this.apiKey).subscribe(
-      r=>{
+      r => {
         this.infoMessage = r;
         this.errorMessage = '';
         this.isLoadingApiKey = false;

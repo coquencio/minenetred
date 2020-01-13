@@ -5,21 +5,24 @@
     <form class="center">
         <h4 class="title">Add or update base addres</h4>
         <div *ngIf="!isLoadingBaseAddress" class="form-group">
-            <input type="text" [(ngModel)]="baseAddress" class="form-control form-input" id="baseAddress" name="baseAddress" placeholder="Enter your base address">
+            <input type="text" [(ngModel)]="baseAddress" class="form-control form-input" id="baseAddress"
+                name="baseAddress" placeholder="Enter your base address">
         </div>
         <div *ngIf="!isLoadingBaseAddress" class="form-group">
-            <button type="submit" (click)="AddBaseAddress()" class="btn btn-primary button">Add/Modify base address</button>
+            <button type="submit" (click)="AddBaseAddress()" class="btn btn-primary button">Add/Modify base
+                address</button>
         </div>
         <app-loading-circle *ngIf="isLoadingBaseAddress"></app-loading-circle>
     </form>
-    <form class="center" *ngIf = "IsValidAddress">
-            <h4 class="title">Add or update api key</h4>
-            <div *ngIf ="!isLoadingApiKey" class="form-group">
-                <input type="text" [(ngModel)]="apiKey" class="form-control form-input" id="Redminekey" name="Redminekey" placeholder="Enter your api key">
-            </div>
-            <div *ngIf ="!isLoadingApiKey" class="form-group">
-                <button type="submit" (click)="AddApiKey()" class="btn btn-primary button">Add/Modify api key</button>
-            </div>
-            <app-loading-circle *ngIf="isLoadingApiKey"></app-loading-circle>
+    <form class="center" *ngIf="IsValidAddress">
+        <h4 class="title">Add or update api key</h4>
+        <div *ngIf="!isLoadingApiKey" class="form-group">
+            <input type="text" [(ngModel)]="apiKey" class="form-control form-input" id="Redminekey" name="Redminekey"
+                placeholder="Enter your api key">
+        </div>
+        <div *ngIf="!isLoadingApiKey" class="form-group">
+            <button type="submit" (click)="AddApiKey()" class="btn btn-primary button">Add/Modify api key</button>
+        </div>
+        <app-loading-circle *ngIf="isLoadingApiKey"></app-loading-circle>
     </form>
 </div>
