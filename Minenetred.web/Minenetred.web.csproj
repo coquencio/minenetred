@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>8909d0c2-5f1b-4cb6-a2dc-02b06a267a5c</UserSecretsId>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
