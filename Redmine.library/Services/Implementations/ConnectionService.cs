@@ -31,5 +31,19 @@ namespace Redmine.Library.Services.Implementations
             HttpResponseMessage response =  await _client.GetAsync("");
             return response.StatusCode;
         }
+        public async Task<bool> IsApiKeyValid(string apiKey)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return false;
+            }
+            string address = Constants.CurrentUser + Constants.Json + "?" + Constants.Key + apiKey;
+            HttpResponseMessage response = await _client.GetAsync(address);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

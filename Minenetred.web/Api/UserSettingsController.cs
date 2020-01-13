@@ -31,10 +31,12 @@ namespace Minenetred.Web.Api
         [HttpPost]
         public async Task<IActionResult> UpdateBaseAddressAsync(string address)
         {
+            string message = "";
             try
             {
                 if (string.IsNullOrEmpty(address))
                 {
+                    message = "Missing address";
                     throw new ArgumentNullException(nameof(address));
                 }
                 _usersManagementService.updateBaseAddress(address, UserPrincipal.Current.EmailAddress);
@@ -43,21 +45,23 @@ namespace Minenetred.Web.Api
                     _usersManagementService.updateBaseAddress("", UserPrincipal.Current.EmailAddress);
                     throw new InvalidCastException("Invalid base address");
                 }
-                return Ok();
+                message = "Base address successfully updated";
+                return Ok(message);
             }
             catch (ArgumentNullException ex)
             {
-                _logger.LogError(ex, "Missing data");
+                _logger.LogError(ex, message);
             }
-            catch (InvalidCastException)
+            catch (InvalidCastException ex)
             {
-                _logger.LogError(new InvalidCastException("Invalid base address"), "Invalid Base address");
+                message = "Invalid base address";
+                _logger.LogError(ex, message);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
-            return BadRequest();
+            return BadRequest(message);
         }
         [Route("settings/key/{Redminekey}")]
         [ProducesResponseType(400)]
@@ -65,33 +69,73 @@ namespace Minenetred.Web.Api
         [HttpPost]
         public async Task<IActionResult> UpdateRedmineKeyAsync([FromRoute] string Redminekey)
         {
+            string message = "";
             try
             {
                 if (string.IsNullOrEmpty(Redminekey))
                 {
+                    message = "Missing key";
                     throw new ArgumentNullException((nameof(Redminekey)));
                 }
                 _usersManagementService.UpdateKey(Redminekey, UserPrincipal.Current.EmailAddress);
                 await _usersManagementService.AddRedmineIdAsync(Redminekey, UserPrincipal.Current.EmailAddress);
-                return Ok();
+                message = "Redmine key successfully updated";
+                return Ok(message);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Missing key");
+                _logger.LogError(ex, message);
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.LogError(ex, "Invalid key");
+                message = "Invalid key";
+                _logger.LogError(ex, message);
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Bad request");
+                message = "Bad request";
+                _logger.LogError(ex, message);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Unhandled exception");
             }
-            return BadRequest();
+            _usersManagementService.UpdateKey("", UserPrincipal.Current.EmailAddress);
+            return BadRequest(message);
+        }
+        [Route("settings/baseAddress")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200)]
+        [HttpGet]
+        public async Task<IActionResult> GetBaseAddressAsync()
+        {
+            var email = UserPrincipal.Current.EmailAddress;
+            var address = await _usersManagementService.GetBaseAddresAsync(email);
+            if (string.IsNullOrEmpty(address))
+            {
+                return NotFound();
+            }
+            return Ok(new { address = address });
+        }
+        [Route("settings/key")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        [HttpGet]
+        public async Task<IActionResult> GetRedmineKeyAsync()
+        {
+            var email = UserPrincipal.Current.EmailAddress;
+            var address = await _usersManagementService.GetBaseAddresAsync(email);
+            if (string.IsNullOrEmpty(address))
+            {
+                return BadRequest();
+            }
+            var Key = _usersManagementService.GetUserKey(email);
+            if (string.IsNullOrEmpty(Key))
+            {
+                return NotFound();
+            }
+            return Ok( new { key = Key });
         }
     }
 }

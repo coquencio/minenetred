@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ɵclearResolutionOfComponentResourcesQueue, ɵConsole } from '@angular/core';
 import { IProject } from './../../../Interfaces/ProjectInterface';
 import {TimeEntrtyService} from '../../../Services/TimeEntryService/time-entrty.service';
-import { formatDate, formatPercent } from '@angular/common';
 
 @Component({
   selector: 'app-weekly-table',
@@ -16,8 +15,8 @@ export class WeeklyTableComponent implements OnInit {
   @Input() tableHeaders: Array<string>;
 
   hoursCounter : Array<number>;
+  ngOnInit(){
 
-  ngOnInit() {
   }
   ngOnChanges(){
     if(this.tableHeaders){

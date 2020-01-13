@@ -76,7 +76,7 @@ namespace Minenetred.Web.Services.Implementations
         {
             if (!Uri.IsWellFormedUriString(address, UriKind.Absolute))
             {
-                throw new Exception("Invalid Uri");
+                throw new InvalidCastException("Invalid Uri");
             }
             var user = _context.Users.SingleOrDefault(u => u.UserName == email);
             user.BaseUri = address;
@@ -87,12 +87,19 @@ namespace Minenetred.Web.Services.Implementations
         }
         public async Task<bool> IsValidBaseAddressAsync()
         {
-            var response = await _connectionService.CheckBaseAddressAsync();
-            if (response == System.Net.HttpStatusCode.OK)
-                return true;
+            try
+            {
+                var response = await _connectionService.CheckBaseAddressAsync();
+                if (response == System.Net.HttpStatusCode.OK)
+                    return true;
 
-            _logger.LogError("Invalid address");
-            return false;
+                _logger.LogError("Invalid address");
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         public void SetGlobalAddress(string email)
         {
@@ -143,6 +150,12 @@ namespace Minenetred.Web.Services.Implementations
                 return _context.Users.SingleOrDefault(c => c.UserName == email).BaseUri;
 
             return null;
+        }
+        public async Task<bool> IsApiKeyValidAsync(string userEmail)
+        {
+            var encryptedApiKey = _context.Users.SingleOrDefault(u => u.UserName == userEmail).RedmineKey;
+            var apiKey = _encryptionService.Decrypt(encryptedApiKey);
+            return await _connectionService.IsApiKeyValid(apiKey);
         }
     }
 }

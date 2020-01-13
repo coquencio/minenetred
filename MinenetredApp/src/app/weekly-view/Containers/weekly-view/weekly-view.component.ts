@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { IProject } from './../../../Interfaces/ProjectInterface';
 import {  ProjectsService } from './../../../Services/ProjectsService/projects.service';
+import { HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Store, select } from '@ngrx/store';
+import * as fromWeeklyView from '../../state/weekly-view.reducer';
+import * as weeklyViewActions from '../../state/weeklyView.actions';
 
 @Component({
   selector: 'app-weekly-view',
@@ -9,16 +14,26 @@ import {  ProjectsService } from './../../../Services/ProjectsService/projects.s
 })
 export class WeeklyViewComponent implements OnInit {
 
-  constructor(private projectService: ProjectsService) { }
+  constructor(
+    private projectService: ProjectsService,
+    private router : Router,
+    private store : Store<fromWeeklyView.State>
+    ) { }
   response : IProject[];
   formatedDates : Array<string>;
   dates : Array<Date>;
 
+
   ngOnInit() {
     this.projectService.GetOpenProjects().subscribe(
       r => {
-        this.response = r ;
-        }
+        this.response = r;
+        this.store.dispatch(new weeklyViewActions.SetWarningMessage(''));
+      },
+      r => {
+        this.store.dispatch(new weeklyViewActions.SetWarningMessage(r.error));
+        this.router.navigate(['/settings']);
+      }
     );
   }
   private GetDayOfTheWeek(date : Date) : string{

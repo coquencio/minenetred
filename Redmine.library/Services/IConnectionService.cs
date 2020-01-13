@@ -10,5 +10,6 @@ namespace Redmine.Library.Services
     {
         void UpdateBaseAddress(string Address);
         Task<HttpStatusCode> CheckBaseAddressAsync();
+        Task<bool> IsApiKeyValid(string apiKey);
     }
 }
