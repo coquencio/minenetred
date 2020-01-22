@@ -77,8 +77,8 @@ export class UserSettingsComponent implements OnInit {
       this.isLoadingBaseAddress = false;
     }, error => {
       console.log(error);
-      this.errorMessage = error.error,
-        this.baseAddress = '';
+      this.errorMessage = error.error;
+      this.baseAddress = '';
       this.infoMessage = '';
       this.IsValidAddress = false;
       this.isLoadingBaseAddress = false;

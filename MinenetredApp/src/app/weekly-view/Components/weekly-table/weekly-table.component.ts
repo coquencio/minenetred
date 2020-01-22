@@ -68,7 +68,7 @@ export class WeeklyTableComponent implements OnInit {
     this.activitiesLoaded = false;
     this.IsModalDisplaying = false;
     this.issueSelector = new Array<IIssue>();
-    this.activitySelector = Array<IActivity>();
+    this.activitySelector = new Array<IActivity>();
     this.store.dispatch(new weeklyViewActions.SetSelectedProjectName(''));
     this.store.dispatch(new weeklyViewActions.SetFormatedDate(''));
     this.timeEntryToPost = {
