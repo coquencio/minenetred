@@ -30,7 +30,11 @@ namespace Minenetred.Web
         public Startup(IConfiguration configuration)
         {
             Log.Logger = new LoggerConfiguration()
-              .WriteTo.MSSqlServer(
+               .Enrich.WithEnvironmentUserName()
+               .Enrich.WithProcessId()
+               .Enrich.WithProcessName()
+               .Enrich.WithUserName()
+               .WriteTo.MSSqlServer(
                   configuration.GetConnectionString("DefaultConnection"),
                   "LogEvents",
                   autoCreateSqlTable: true,
